@@ -1,0 +1,36 @@
+import React from 'react';
+import { SOCIAL_POSTS } from '../constants';
+import { Instagram } from 'lucide-react';
+
+const SocialProof: React.FC = () => {
+  return (
+    <section className="bg-white dark:bg-black py-24 text-black dark:text-white">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 font-heading">STYLED BY YOU</h3>
+          <p className="text-black/40 dark:text-white/40 uppercase tracking-[0.2em] text-sm">Tag #CalabarSon to be featured</p>
+        </div>
+
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+          {SOCIAL_POSTS.map((post) => (
+            <div key={post.id} className="relative group cursor-pointer overflow-hidden break-inside-avoid border border-black/5 dark:border-white/5">
+              <img 
+                src={post.image} 
+                alt={post.username}
+                className="w-full grayscale dark:contrast-125 group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6">
+                <div className="text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <Instagram className="w-8 h-8 mx-auto mb-4 text-blue-500" />
+                  <span className="font-bold text-lg tracking-tight text-white">{post.username}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SocialProof;
