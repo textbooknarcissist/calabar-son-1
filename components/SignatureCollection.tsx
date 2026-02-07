@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SIGNATURE_PRODUCTS, ALL_PRODUCTS, CURRENCY } from '../constants';
 import { Product } from '../types';
 import { Eye, Plus, X, ShoppingCart, Check, ChevronRight, Grid, ArrowLeft } from 'lucide-react';
@@ -52,7 +52,7 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
         </div>
       </div>
 
-      {/* Quick View Modal */}
+      {/* Quick View Popup (side panel) */}
       {selectedProduct && (
         <QuickViewModal 
           product={selectedProduct} 
@@ -234,10 +234,10 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
 };
 
 const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToCart: (p: Product) => void }> = ({ product, onClose, onAddToCart }) => {
-  const pushedRef = React.useRef(false);
+  const pushedRef = useRef(false);
 
   useEffect(() => {
-    // Push a history state so browser "back" will close the modal
+    // Push a history state so browser "back" will close the quick view
     try {
       window.history.pushState({ quickView: true, id: product.id }, '', `#preview-${product.id}`);
       pushedRef.current = true;
@@ -245,9 +245,7 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
       pushedRef.current = false;
     }
 
-    const onPop = () => {
-      onClose();
-    };
+    const onPop = () => onClose();
     window.addEventListener('popstate', onPop);
 
     return () => {
@@ -257,7 +255,7 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
           const url = window.location.pathname + window.location.search;
           window.history.replaceState(null, '', url);
         } catch (e) {
-          /* ignore */
+          // ignore
         }
       }
     };
@@ -272,90 +270,67 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12">
-      <div 
-        className="absolute inset-0 bg-white/95 dark:bg-black/95 backdrop-blur-xl transition-opacity animate-in fade-in duration-500" 
-        onClick={doClose} 
-      />
-      
-      <div className="relative w-full max-w-6xl bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-500 shadow-2xl">
-        <button 
-          onClick={doClose}
-          className="absolute top-8 left-8 z-20 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-black dark:text-white hover:text-blue-500 transition-all bg-black/5 dark:bg-white/5 px-6 py-3 rounded-full"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Exit Preview
-        </button>
+    <div className="fixed inset-0 z-[110] flex items-start justify-end">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={doClose} aria-hidden />
 
-        <button 
-          onClick={doClose}
-          aria-label="Close preview"
-          className="absolute top-8 right-8 z-20 text-black/50 dark:text-white/50 hover:text-blue-500 transition-colors p-2"
-        >
-          <X className="w-8 h-8" />
-        </button>
-
-        <div className="w-full md:w-3/5 aspect-square md:aspect-auto relative bg-[#f7f7f7] dark:bg-[#0d0d0d]">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="w-full h-full object-contain p-12"
-          />
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
-             {[1,2,3].map(i => (
-               <div key={i} className={`w-1.5 h-1.5 rounded-full border border-black/20 dark:border-white/20 ${i === 1 ? 'bg-blue-500 border-blue-500' : ''}`} />
-             ))}
+      <aside className="relative z-30 w-full max-w-[460px] h-[92vh] m-4 bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 rounded-lg shadow-2xl overflow-auto transform translate-x-0 transition-transform duration-400">
+        <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5">
+          <div className="flex items-center gap-3">
+            <button onClick={doClose} className="flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] text-black dark:text-white hover:text-blue-500 transition">
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
           </div>
+          <button onClick={doClose} aria-label="Close preview" className="p-2 text-black/50 dark:text-white/50 hover:text-blue-500">
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
-        <div className="w-full md:w-2/5 p-12 md:p-20 flex flex-col justify-center border-l border-black/5 dark:border-white/5">
-          <span className="text-blue-500 font-black uppercase tracking-[0.4em] text-[9px] mb-6 block">Limited Release</span>
-          <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6 font-heading text-black dark:text-white leading-[0.9]">{product.name}</h2>
-          
-          <div className="flex items-center gap-6 mb-10">
-            <span className="text-4xl font-light text-black/90 dark:text-white/90">{CURRENCY}{product.price.toLocaleString()}</span>
-            <div className="h-6 w-px bg-black/10 dark:bg-white/10" />
-            <div className="flex flex-col">
-              <span className="text-[10px] text-black/40 dark:text-white/40 uppercase tracking-widest font-black">Free Priority Shipping</span>
-              <span className="text-[10px] text-green-500 uppercase tracking-widest font-black">Ships within 24 hours</span>
-            </div>
+        <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-[#f7f7f7] dark:bg-[#0d0d0d] rounded-md flex items-center justify-center p-4">
+            <img src={product.image} alt={product.name} className="max-h-[60vh] object-contain" />
           </div>
 
-          <p className="text-black/60 dark:text-white/60 leading-relaxed mb-12 text-sm md:text-base font-medium">
-            Meticulously engineered with our proprietary 'Street-Flex' chassis. Featuring a 6-panel structured crown, reinforced sweatband, and custom matte-black hardware.
-          </p>
-
-          <div className="space-y-8 mb-16">
+          <div className="flex flex-col justify-between">
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-black/40 dark:text-white/40">Select Variant</span>
-                <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 underline cursor-pointer">Size Guide</span>
+              <span className="text-blue-500 font-black uppercase tracking-[0.4em] text-[9px] mb-3 block">Limited Release</span>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-4 text-black dark:text-white">{product.name}</h2>
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-2xl font-light text-black/90 dark:text-white/90">{CURRENCY}{product.price.toLocaleString()}</span>
+                <div className="h-6 w-px bg-black/10 dark:bg-white/10" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-black/40 dark:text-white/40 uppercase tracking-widest font-black">Free Priority Shipping</span>
+                  <span className="text-[10px] text-green-500 uppercase tracking-widest font-black">Ships within 24 hours</span>
+                </div>
               </div>
-              <div className="flex gap-4">
-                {['S/M', 'L/XL', 'Custom'].map(size => (
-                  <button key={size} className="flex-1 border border-black/10 dark:border-white/10 py-4 text-[10px] font-black uppercase tracking-[0.2em] hover:border-blue-500 hover:text-blue-500 transition-all text-black dark:text-white bg-black/[0.02] dark:bg-white/[0.02]">
-                    {size}
-                  </button>
-                ))}
+
+              <p className="text-black/60 dark:text-white/60 leading-relaxed mb-4 text-sm">Meticulously engineered with our proprietary 'Street-Flex' chassis. Featuring a 6-panel structured crown, reinforced sweatband, and custom matte-black hardware.</p>
+
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-black/40 dark:text-white/40">Select Variant</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 underline cursor-pointer">Size Guide</span>
+                </div>
+                <div className="flex gap-3">
+                  {['S/M', 'L/XL', 'Custom'].map(size => (
+                    <button key={size} className="flex-1 border border-black/10 dark:border-white/10 py-2 text-[10px] font-black uppercase tracking-[0.2em] hover:border-blue-500 hover:text-blue-500 transition-all text-black dark:text-white bg-black/[0.02] dark:bg-white/[0.02]">
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-4">
-            <button 
-              onClick={() => onAddToCart(product)}
-              className="w-full bg-black dark:bg-white text-white dark:text-black py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-500 flex items-center justify-center gap-4 group"
-            >
-              <ShoppingCart className="w-4 h-4 group-hover:scale-125 group-hover:-rotate-12 transition-all" /> Add to Order
-            </button>
-            <button 
-              onClick={doClose}
-              className="w-full border border-black/10 dark:border-white/10 text-black dark:text-white py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all flex items-center justify-center gap-4"
-            >
-              Full Specifications <ChevronRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => onAddToCart(product)} className="w-full bg-black dark:bg-white text-white dark:text-black py-3 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white hover:shadow transition-all">
+                <ShoppingCart className="w-4 h-4 inline-block mr-2" /> Add to Order
+              </button>
+              <button onClick={doClose} className="w-full border border-black/10 dark:border-white/10 text-black dark:text-white py-3 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all">
+                Full Specifications <ChevronRight className="w-4 h-4 inline-block ml-2" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   );
 };
