@@ -273,7 +273,7 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
     <div className="fixed inset-0 z-[110] flex items-start justify-end">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={doClose} aria-hidden />
 
-      <aside className="relative z-30 w-full max-w-[460px] h-[92vh] m-4 bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 rounded-lg shadow-2xl overflow-auto transform translate-x-0 transition-transform duration-400">
+      <aside className="relative z-30 w-full max-w-[540px] h-[92vh] m-4 bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 rounded-lg shadow-2xl overflow-auto transform translate-x-0 transition-transform duration-400">
         <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-3">
             <button onClick={doClose} className="flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] text-black dark:text-white hover:text-blue-500 transition">
@@ -285,9 +285,11 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
           </button>
         </div>
 
-        <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#f7f7f7] dark:bg-[#0d0d0d] rounded-md flex items-center justify-center p-4">
-            <img src={product.image} alt={product.name} className="max-h-[60vh] object-contain" />
+        <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="flex items-center justify-center">
+            <div className="bg-gradient-to-br from-white to-gray-100 dark:from-[#0a0a0a] dark:to-[#050505] rounded-full w-[260px] h-[260px] flex items-center justify-center p-4 shadow-xl overflow-hidden">
+              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+            </div>
           </div>
 
           <div className="flex flex-col justify-between">
