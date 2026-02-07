@@ -48,7 +48,8 @@ const App: React.FC = () => {
       }
       return [...prevCart, { product, quantity: 1 }];
     });
-    setIsCartOpen(true);
+    // Keep the cart closed when adding items from product cards/quick-view
+    setIsCartOpen(false);
   };
 
   const removeFromCart = (productId: string) => {

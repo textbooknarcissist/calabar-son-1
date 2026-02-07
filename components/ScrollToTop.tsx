@@ -45,7 +45,7 @@ const ScrollToTop: React.FC = () => {
       </button>
       
       {/* Scroll indicator text (Mobile hidden, shown on hover desktop) */}
-      <span className="absolute right-14 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.3em] text-black/40 dark:text-white/40 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">
+      <span className="absolute right-14 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.3em] text-black/40 dark:text-white/40 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity hidden md:block pointer-events-none">
         Back to Top
       </span>
     </div>

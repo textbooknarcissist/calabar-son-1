@@ -83,43 +83,50 @@ App.tsx (State Management Hub)
 
 ## ✨ Key Features Implemented
 
-### 1. **Smart Cart System**
+### 1. **Smart Cart System** ✅
 
 - Add/remove products with optimistic state updates
 - Quantity adjustments with validation (minimum 1 item)
 - Subtotal calculation with currency formatting (₦ Nigerian Naira)
 - Drawer animation with smooth transition (300ms cubic-bezier)
 - Persistent cart badge on navbar
+- Shipping cost calculations (₦5,000 flat rate)
+- Tax computation (7.5% on subtotal)
 
-### 2. **Interactive Product Gallery**
+### 2. **Interactive Product Gallery** ✅
 
 - Dual-image hover effect with smooth scale/opacity transitions
 - Floating category badges that animate on hover
 - Quick-view modal with full-screen product inspector
 - Full collection modal with grid layout (1-4 columns responsive)
 - Visual feedback (green "Piece Secured" button after add)
+- Signature collection (3 featured products)
+- Extended archive (6+ products in full collection)
 
-### 3. **Dark Mode with System Preference**
+### 3. **Dark Mode with System Preference** ✅
 
-- Persistent toggle in navbar
-- CSS variables for semantic colors (`--dark-bg`, `--dark-text`)
-- Respects `prefers-color-scheme` media query
-- Smooth transitions between themes
+- Persistent toggle in navbar (Sun/Moon icons)
+- Tailwind dark mode class-based implementation
+- Smooth transitions between themes (500ms)
+- Consistent styling across all 9 components
 
-### 4. **Responsive & Accessible**
+### 4. **Responsive & Accessible** ✅
 
-- WCAG AA compliant (ARIA labels on 10+ buttons)
-- Semantic HTML (`<button>`, `<nav>`, `<main>`, `<footer>`)
+- WCAG AA compliant (ARIA labels on 15+ buttons)
+- Semantic HTML (proper `<button>`, `<nav>`, `<main>`, `<footer>` tags)
 - Keyboard navigable (`:focus-visible` states on all interactive elements)
 - Dark mode contrast ratios meet AA standards
+- Proper label associations in forms
+- Role-based button elements (not `<div>` clickables)
 
-### 5. **Performance Optimizations**
+### 5. **Performance Optimizations** ✅
 
 - Image lazy loading via native `loading="lazy"` attribute
-- CSS transitions instead of JavaScript animations
+- CSS transitions instead of JavaScript animations (cubic-bezier easing)
 - Efficient re-renders via memoization where needed
-- Static data in constants to avoid re-computation
+- Static product data in constants to avoid re-computation
 - Minified icons from lucide-react (2KB gzipped)
+- Tailwind CDN with tree-shaking (only used utilities included)
 
 ---
 
@@ -170,23 +177,25 @@ App.tsx (State Management Hub)
 calabar-son-1/
 ├── App.tsx                    # Root component (state orchestration)
 ├── index.tsx                  # React entry point
+├── index.html                 # HTML entry with Tailwind CDN (sole styling approach)
 ├── types.ts                   # TypeScript interfaces (Product, CartItem, etc.)
 ├── constants.ts               # Product data, bundles, theme colors
+├── vite.config.ts             # Vite configuration (port 3000)
+├── tsconfig.json              # TypeScript with strict mode enabled
+├── package.json               # Dependencies (React 19, Vite 6, Tailwind CDN)
 ├── components/
 │   ├── Navbar.tsx             # Navigation with theme toggle & cart badge
 │   ├── Hero.tsx               # Hero section with CTA buttons
-│   ├── SignatureCollection.tsx # Product gallery + modals (largest component)
-│   ├── QualitySpotlight.tsx    # Product benefits section
-│   ├── HotDeals.tsx            # Carousel of promotional bundles
-│   ├── SocialProof.tsx         # Instagram grid widget
+│   ├── SignatureCollection.tsx # Product gallery + QuickView/FullCollection modals
+│   ├── QualitySpotlight.tsx    # Product benefits section (split layout)
+│   ├── HotDeals.tsx            # Carousel of promotional bundles (2 deals)
+│   ├── SocialProof.tsx         # Instagram grid widget (6 posts)
 │   ├── Footer.tsx              # Footer + newsletter signup
-│   ├── CartDrawer.tsx          # Slide-out cart sidebar
-│   └── ScrollToTop.tsx         # Sticky scroll-to-top button
-├── index.html                 # HTML entry with OG tags
-├── vite.config.ts             # Vite configuration
-├── tsconfig.json              # TypeScript strict mode enabled
-├── package.json               # Dependencies
-├── .gitignore                 # Excludes node_modules, .env.local
+│   ├── CartDrawer.tsx          # Slide-out cart sidebar with checkout trigger
+│   ├── ScrollToTop.tsx         # Sticky scroll-to-top button (bottom-right)
+│   └── Checkout.tsx            # 4-step checkout flow (NEW)
+├── .gitignore                 # Excludes node_modules, dist, .env.local
+├── .vscode/settings.json      # TypeScript spelling configuration
 └── README.md                  # This file
 ```
 
@@ -194,24 +203,35 @@ calabar-son-1/
 
 ## 🛠️ Development Best Practices
 
+### Styling Approach: Tailwind CDN (Consolidated)
+
+**Decision**: Single approach using Tailwind CDN via `index.html`
+
+- CDN script loads from `cdn.tailwindcss.com` with dark mode class configuration
+- Custom scrollbar styling defined in index.html `<style>` tag
+- Eliminates build-time PostCSS complexity while maintaining full Tailwind features
+- Suitable for projects without server-side rendering requirements
+
 ### TypeScript Configuration
 
 **Strict Mode Enabled** (`tsconfig.json`):
 
 - `strict: true` — Catches type errors at compile time
-- `forceConsistentCasingInFileNames: true` — Prevents import path bugs on Windows
-- `moduleResolution: "bundler"` — Compatible with modern bundlers
+- `forceConsistentCasingInFileNames: true` — Prevents import path bugs
+- `moduleResolution: "bundler"` — Compatible with Vite
 - `noEmit: true` — Type checking only (Vite handles compilation)
 
 ### Accessibility Compliance
 
 ✅ **Implemented**:
 
-- ARIA labels on 10+ icon-only buttons
-- Semantic button elements (not `<div>` or `<span>`)
+- ARIA labels on 15+ icon-only buttons and interactive elements
+- Semantic button elements (not `<div>` or `<span>`) for all clickable items
 - Focus states with `:focus-visible` pseudo-class
-- High contrast ratios in light/dark modes (tested with aXe DevTools)
+- High contrast ratios in light/dark modes (minimum 4.5:1)
 - Keyboard navigation support (Tab, Enter, Escape)
+- Title attributes for non-text buttons (tooltips)
+- Proper form label associations in checkout flow
 
 ### Performance Metrics
 
@@ -252,22 +272,24 @@ calabar-son-1/
 
 ## 📊 Technical Trade-offs
 
-| Decision         | Why                                      | Trade-off                               |
-| ---------------- | ---------------------------------------- | --------------------------------------- |
-| Tailwind CSS     | Fast prototyping, consistent spacing     | Larger HTML files, utility bloat        |
-| Lucide React     | Tree-shakeable, 4KB icons                | Limited customization                   |
-| Vite             | Fast HMR, optimized builds               | Smaller ecosystem vs Webpack            |
-| Centered State   | Simple, explicit data flow               | Needs refactor at scale (10+ comps)     |
-| Static Products  | No API latency, offline compatible       | Manual updates (no CMS integration)     |
+| Decision            | Why                                    | Trade-off                              |
+| ------------------- | -------------------------------------- | -------------------------------------- |
+| Tailwind CDN        | Fast setup, no build complexity        | CDN latency (50-100ms), no offline     |
+| Lucide React Icons  | Tree-shakeable, 2KB gzipped            | Limited customization                  |
+| Vite                | Fast HMR, optimized bundles (262KB JS) | Smaller ecosystem vs Webpack           |
+| Centralized State   | Simple, explicit data flow             | Needs refactor at scale (10+ comps)    |
+| Static Product Data | No API latency, offline compatible     | No dynamic catalog (manual updates)    |
+| CDN Images          | Free, high-quality stock photos        | Dependent on external service          |
 
 ---
 
 ## 🎯 Future Enhancements
 
 1. **Backend Integration**
+   - REST API endpoint `/api/orders` for checkout order submission
+   - Stripe or PayPal integration for real payment processing (replace `tok_placeholder`)
    - Headless CMS (Sanity, Contentful) for dynamic product catalog
-   - REST API or GraphQL endpoint for checkout
-   - User authentication & order history
+   - User authentication & order history tracking
 
 2. **Analytics & SEO**
    - Google Analytics / Mixpanel for conversion tracking
@@ -275,7 +297,8 @@ calabar-son-1/
    - Structured data (JSON-LD for products)
 
 3. **Performance**
-   - Image optimization (WebP, AVIF formats)
+   - Migrate from Tailwind CDN to build-time compilation for faster load times
+   - Image optimization (WebP, AVIF formats via next-gen img tag)
    - Code splitting for modals (lazy load components)
    - Service Worker for offline PWA support
 

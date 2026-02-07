@@ -11,24 +11,24 @@ export const SIGNATURE_PRODUCTS: Product[] = [
     id: '1',
     name: 'ONYX STEALTH SNAPBACK',
     price: 45000,
-    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/onyx-stealth-main.jpg',
+    hoverImage: '/assets/images/products/onyx-stealth-hover.jpg',
     category: 'Signature'
   },
   {
     id: '2',
     name: 'URBAN NOMAD TRUCKER',
     price: 35000,
-    image: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1575435462410-6c7031910629?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/urban-nomad-main.jpg',
+    hoverImage: '/assets/images/products/urban-nomad-hover.jpg',
     category: 'Limited'
   },
   {
     id: '3',
     name: 'CHARCOAL MERINO WOOL',
     price: 55000,
-    image: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/charcoal-merino-main.avif',
+    hoverImage: '/assets/images/products/charcoal-merino-hover.avif',
     category: 'Premium'
   }
 ];
@@ -39,24 +39,24 @@ export const ALL_PRODUCTS: Product[] = [
     id: '4',
     name: 'MIDNIGHT BEANIE',
     price: 25000,
-    image: 'https://images.unsplash.com/photo-1576871333020-04099436113b?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1629135338245-c33190860528?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/midnight-beanie-main.avif',
+    hoverImage: '/assets/images/products/midnight-beanie-hover.avif',
     category: 'Fall/Winter'
   },
   {
     id: '5',
     name: 'STREET BUCKET CAP',
     price: 38000,
-    image: 'https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1490130282470-3d7759a2243d?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/street-bucket-main.avif',
+    hoverImage: '/assets/images/products/street-bucket-hover.avif',
     category: 'Summer'
   },
   {
     id: '6',
     name: 'VINTAGE CORDUROY',
     price: 42000,
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
-    hoverImage: 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?q=80&w=800&auto=format&fit=crop',
+    image: '/assets/images/products/vintage-corduroy-main.avif',
+    hoverImage: '/assets/images/products/vintage-corduroy-hover.avif',
     category: 'Classic'
   }
 ];

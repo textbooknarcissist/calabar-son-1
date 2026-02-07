@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SIGNATURE_PRODUCTS, ALL_PRODUCTS, CURRENCY } from '../constants';
 import { Product } from '../types';
 import { Eye, Plus, X, ShoppingCart, Check, ChevronRight, Grid, ArrowLeft } from 'lucide-react';
@@ -42,12 +42,12 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
         <div className="flex justify-center">
           <button 
             onClick={() => setIsCollectionOpen(true)}
-            className="group relative px-16 py-6 font-black uppercase tracking-[0.4em] text-[10px] transition-all overflow-hidden border border-black/5 dark:border-white/5"
+            className="group relative px-16 py-6 font-black uppercase tracking-[0.4em] text-[10px] transition-all overflow-hidden border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] hover:border-blue-500 hover:bg-blue-500/10"
           >
-            <span className="relative z-10 flex items-center gap-4 text-black dark:text-white group-hover:text-blue-500 transition-colors">
-              <Grid className="w-3 h-3" /> Explore Entire Archive
+            <span className="relative z-10 flex items-center gap-4 text-black dark:text-white group-hover:text-blue-500 transition-colors duration-300">
+              <Grid className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" /> Explore Entire Archive
             </span>
-            <div className="absolute inset-0 bg-black/[0.02] dark:bg-white/[0.02] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
           </button>
         </div>
       </div>
@@ -124,7 +124,7 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
           <button 
             onClick={(e) => { e.stopPropagation(); onQuickView(); }}
-            className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white hover:shadow-xl hover:scale-105 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           >
             Quick View
           </button>
@@ -134,10 +134,10 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
         <button 
           onClick={handleAddToCart}
           disabled={added}
-          className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white'}`}
+          className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
         >
           <span className="flex items-center justify-center gap-3">
-            {added ? <><Check className="w-3 h-3" /> Piece Secured</> : <><Plus className="w-3 h-3" /> Add to Order</>}
+            {added ? <><Check className="w-3 h-3" /> Piece Secured</> : <><Plus className="w-3 h-3 group-hover:scale-125 transition-transform" /> Add to Order</>}
           </span>
         </button>
       </div>
@@ -234,23 +234,60 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
 };
 
 const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToCart: (p: Product) => void }> = ({ product, onClose, onAddToCart }) => {
+  const pushedRef = React.useRef(false);
+
+  useEffect(() => {
+    // Push a history state so browser "back" will close the modal
+    try {
+      window.history.pushState({ quickView: true, id: product.id }, '', `#preview-${product.id}`);
+      pushedRef.current = true;
+    } catch (e) {
+      pushedRef.current = false;
+    }
+
+    const onPop = () => {
+      onClose();
+    };
+    window.addEventListener('popstate', onPop);
+
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      if (pushedRef.current) {
+        try {
+          const url = window.location.pathname + window.location.search;
+          window.history.replaceState(null, '', url);
+        } catch (e) {
+          /* ignore */
+        }
+      }
+    };
+  }, [product.id, onClose]);
+
+  const doClose = () => {
+    if (pushedRef.current && window.history && window.history.length > 0) {
+      window.history.back();
+    } else {
+      onClose();
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 md:p-12">
       <div 
         className="absolute inset-0 bg-white/95 dark:bg-black/95 backdrop-blur-xl transition-opacity animate-in fade-in duration-500" 
-        onClick={onClose} 
+        onClick={doClose} 
       />
       
       <div className="relative w-full max-w-6xl bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-500 shadow-2xl">
         <button 
-          onClick={onClose}
+          onClick={doClose}
           className="absolute top-8 left-8 z-20 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-black dark:text-white hover:text-blue-500 transition-all bg-black/5 dark:bg-white/5 px-6 py-3 rounded-full"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Exit Preview
         </button>
 
         <button 
-          onClick={onClose}
+          onClick={doClose}
           aria-label="Close preview"
           className="absolute top-8 right-8 z-20 text-black/50 dark:text-white/50 hover:text-blue-500 transition-colors p-2"
         >
@@ -306,12 +343,12 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
           <div className="flex flex-col gap-4">
             <button 
               onClick={() => onAddToCart(product)}
-              className="w-full bg-black dark:bg-white text-white dark:text-black py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white transition-all duration-500 flex items-center justify-center gap-4 group"
+              className="w-full bg-black dark:bg-white text-white dark:text-black py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-500 flex items-center justify-center gap-4 group"
             >
-              <ShoppingCart className="w-4 h-4 group-hover:scale-110 transition-transform" /> Add to Order
+              <ShoppingCart className="w-4 h-4 group-hover:scale-125 group-hover:-rotate-12 transition-all" /> Add to Order
             </button>
             <button 
-              onClick={onClose}
+              onClick={doClose}
               className="w-full border border-black/10 dark:border-white/10 text-black dark:text-white py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all flex items-center justify-center gap-4"
             >
               Full Specifications <ChevronRight className="w-4 h-4" />

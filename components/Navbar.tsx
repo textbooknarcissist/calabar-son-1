@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShoppingBag, Search, Menu, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, Menu, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
   scrolled: boolean;
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
             )}
           </button>
           
-          <Search className="w-5 h-5 cursor-pointer hover:text-blue-500 transition-colors hidden sm:block text-black dark:text-white" />
+          {/* Search removed per project request */}
           
           <div onClick={onOpenCart} className="relative cursor-pointer group text-black dark:text-white">
             <ShoppingBag className="w-5 h-5 group-hover:text-blue-500 transition-colors" />

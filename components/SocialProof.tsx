@@ -13,7 +13,10 @@ const SocialProof: React.FC = () => {
 
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
           {SOCIAL_POSTS.map((post) => (
-            <div key={post.id} className="relative group cursor-pointer overflow-hidden break-inside-avoid border border-black/5 dark:border-white/5">
+            <button 
+              key={post.id} 
+              className="relative group w-full overflow-hidden break-inside-avoid border border-black/5 dark:border-white/5 hover:border-blue-500 transition-colors"
+              aria-label={`View ${post.username} on Instagram`}>
               <img 
                 src={post.image} 
                 alt={post.username}
@@ -21,11 +24,11 @@ const SocialProof: React.FC = () => {
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6">
                 <div className="text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <Instagram className="w-8 h-8 mx-auto mb-4 text-blue-500" />
-                  <span className="font-bold text-lg tracking-tight text-white">{post.username}</span>
+                  <Instagram className="w-8 h-8 mx-auto mb-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                  <span className="font-bold text-lg tracking-tight text-white group-hover:text-blue-300 transition-colors">{post.username}</span>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>

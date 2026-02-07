@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
                 placeholder="EMAIL ADDRESS" 
                 className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-6 py-4 text-xs font-bold uppercase tracking-widest focus:outline-none focus:border-blue-500 transition-colors placeholder:text-black/20 dark:placeholder:text-white/20"
               />
-              <button aria-label="Subscribe" className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-black dark:hover:text-white transition-colors">
+            <button aria-label="Subscribe" className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:translate-x-1 hover:scale-125">
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>

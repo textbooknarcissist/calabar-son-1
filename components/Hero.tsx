@@ -14,27 +14,21 @@ const Hero: React.FC = () => {
     <section className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-white dark:bg-black px-6">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/70 dark:from-black/70 via-white/20 dark:via-black/20 to-white dark:to-black z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 dark:from-black/40 via-white/0 dark:via-black/0 to-transparent z-10" />
         <img 
-          src="https://images.unsplash.com/photo-1575435462410-6c7031910629?auto=format&fit=crop&q=80&w=2560"
+          src="/assets/images/hero/hero-background.jpg"
           alt="Premium Streetwear Background"
-          className="w-full h-full object-cover opacity-30 dark:opacity-60 scale-105"
+          className="w-full h-full object-cover opacity-100 dark:opacity-80 scale-105"
         />
       </div>
 
       {/* Main Content Container */}
       <div className="relative z-20 container mx-auto text-center mt-20 md:mt-24">
-        <div className="inline-block mb-4 px-4 py-1 border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-sm">
-          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 text-black dark:text-white">
-            <Play className="w-2 h-2 fill-blue-500 text-blue-500" /> Premium Headwear Studio
-          </span>
-        </div>
-        
         <h2 className="text-4xl md:text-6xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-[0.85] mb-6 font-heading text-black dark:text-white">
           THE CROWN <br /> OF THE <span className="text-blue-500">STREETS</span>
         </h2>
         
-        <p className="text-sm md:text-lg text-black/60 dark:text-white/70 max-w-xl mx-auto mb-10 tracking-wide font-light leading-relaxed">
+        <p className="text-sm md:text-lg text-black/90 dark:text-white/70 max-w-xl mx-auto mb-10 tracking-wide font-light leading-relaxed drop-shadow-sm">
           Artisanal precision meets architectural urban design. Elevate your silhouette with the world's most structured luxury headwear.
         </p>
 
@@ -56,11 +50,11 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Decorative vertical scroll indicator */}
-      <div className="absolute bottom-6 left-6 md:left-12 flex flex-col items-center gap-2">
-        <span className="text-[9px] font-bold uppercase tracking-[0.3em] rotate-180 [writing-mode:vertical-lr] text-black/30 dark:text-white/30 h-16 flex items-center">
+      <div className="absolute bottom-6 left-6 md:left-12 flex flex-col items-center gap-2 overflow-hidden">
+        <span className="text-[9px] font-bold uppercase tracking-[0.3em] rotate-180 [writing-mode:vertical-lr] text-black/30 dark:text-white/30 h-20 flex items-center overflow-hidden">
           Discovery
         </span>
-        <div className="w-px h-8 bg-gradient-to-b from-blue-500 to-transparent" />
+        <div className="w-px h-8 bg-gradient-to-b from-blue-500 to-transparent hover:from-blue-600 transition-colors duration-300" />
       </div>
 
       {/* Floating social tag */}

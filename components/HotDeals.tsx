@@ -87,9 +87,12 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
               </div>
               <button 
                 onClick={handleClaimOffer}
-                className="w-full bg-black dark:bg-white text-white dark:text-black py-6 font-black uppercase tracking-[0.2em] text-sm hover:bg-blue-500 hover:text-white transition-all duration-300"
+                className="w-full bg-black dark:bg-white text-white dark:text-black py-6 font-black uppercase tracking-[0.2em] text-sm hover:bg-blue-500 hover:text-white hover:shadow-lg transition-all duration-300 group"
               >
-                Claim Offer
+                <span className="flex items-center justify-center gap-3">
+                  Claim Offer
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
               </button>
             </div>
           </div>

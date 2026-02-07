@@ -386,7 +386,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">Billing Address</h2>
             <div className="space-y-6">
-              <label className="flex items-center gap-3 cur sor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   name="sameAsShipping"
