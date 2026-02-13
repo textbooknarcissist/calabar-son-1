@@ -13,14 +13,14 @@ const SocialProof: React.FC = () => {
 
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
           {SOCIAL_POSTS.map((post) => (
-            <button 
-              key={post.id} 
+            <button
+              key={post.id}
               className="relative group w-full overflow-hidden break-inside-avoid border border-black/5 dark:border-white/5 hover:border-blue-500 transition-colors"
               aria-label={`View ${post.username} on Instagram`}>
-              <img 
-                src={post.image} 
+              <img
+                src={post.image}
                 alt={post.username}
-                className="w-full grayscale dark:contrast-125 group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                className="w-full h-[300px] sm:h-[400px] object-cover dark:contrast-125 transition-all duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6">
                 <div className="text-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
