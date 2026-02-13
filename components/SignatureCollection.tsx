@@ -30,9 +30,9 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-20 mb-20">
           {SIGNATURE_PRODUCTS.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
+            <ProductCard
+              key={product.id}
+              product={product}
               onQuickView={() => setSelectedProduct(product)}
               onAddToCart={onAddToCart}
             />
@@ -40,7 +40,7 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
         </div>
 
         <div className="flex justify-center">
-          <button 
+          <button
             onClick={() => setIsCollectionOpen(true)}
             className="group relative px-16 py-6 font-black uppercase tracking-[0.4em] text-[10px] transition-all overflow-hidden border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] hover:border-blue-500 hover:bg-blue-500/10"
           >
@@ -54,16 +54,16 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
 
       {/* Quick View Popup (side panel) */}
       {selectedProduct && (
-        <QuickViewModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
+        <QuickViewModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
           onAddToCart={onAddToCart}
         />
       )}
 
       {/* Full Collection Modal */}
       {isCollectionOpen && (
-        <FullCollectionModal 
+        <FullCollectionModal
           onClose={() => setIsCollectionOpen(false)}
           onQuickView={(p) => setSelectedProduct(p)}
           onAddToCart={onAddToCart}
@@ -85,31 +85,31 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
   };
 
   return (
-    <div 
+    <div
       className="group relative flex flex-col"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Gallery Frame */}
       <div className="relative aspect-[4/5] overflow-hidden bg-[#f7f7f7] dark:bg-[#0d0d0d] mb-8 transition-all duration-700 ease-in-out border border-transparent group-hover:border-black/5 dark:group-hover:border-white/10 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-        
+
         {/* Main Image */}
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.name}
           className={`w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${hovered ? 'scale-110 opacity-0' : 'scale-100 opacity-100'}`}
         />
-        
+
         {/* Hover Image */}
-        <img 
-          src={product.hoverImage} 
+        <img
+          src={product.hoverImage}
           alt={`${product.name} alternate view`}
           className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${hovered ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`}
         />
 
         {/* Subtle Vignette on Hover */}
         <div className={`absolute inset-0 bg-gradient-to-t from-black/20 to-transparent transition-opacity duration-500 ${hovered ? 'opacity-100' : 'opacity-0'}`} />
-        
+
         {/* Floating Badge */}
         {product.category && (
           <div className="absolute top-5 left-5 overflow-hidden">
@@ -122,7 +122,7 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
 
         {/* Action Controls */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); onQuickView(); }}
             className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white hover:shadow-xl hover:scale-105 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           >
@@ -131,7 +131,7 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
         </div>
 
         {/* Bottom Cart Action */}
-        <button 
+        <button
           onClick={handleAddToCart}
           disabled={added}
           className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
@@ -169,11 +169,11 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-white/95 dark:bg-black/95 backdrop-blur-2xl animate-in fade-in duration-300" onClick={onClose} />
-      
+
       <div className="relative w-full h-full md:w-[95vw] md:h-[95vh] bg-white dark:bg-black md:border border-black/5 dark:border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-500 shadow-2xl">
         <div className="flex justify-between items-center p-8 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-8">
-            <button 
+            <button
               onClick={onClose}
               className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-black dark:text-white hover:text-blue-500 transition-all bg-black/5 dark:bg-white/5 px-6 py-3 rounded-full"
             >
@@ -185,7 +185,7 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
               <p className="text-black/30 dark:text-white/30 text-[9px] uppercase tracking-[0.3em] font-black mt-1">Sourcing the streets for the perfect fit</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             aria-label="Close modal"
             className="text-black/50 dark:text-white/50 hover:text-blue-500 transition-colors p-3 border border-black/5 dark:border-white/5 rounded-full"
@@ -197,9 +197,9 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
         <div className="flex-1 overflow-y-auto p-8 md:p-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-20">
             {ALL_PRODUCTS.map(product => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
+              <ProductCard
+                key={product.id}
+                product={product}
                 onQuickView={() => onQuickView(product)}
                 onAddToCart={onAddToCart}
               />
@@ -219,11 +219,11 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
               { src: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg', alt: 'MC', h: 'h-5' },
               { src: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg', alt: 'Visa', h: 'h-3' }
             ].map((icon, idx) => (
-              <img 
+              <img
                 key={idx}
-                src={icon.src} 
-                alt={icon.alt} 
-                className={`${icon.h} w-auto object-contain transition-transform hover:scale-110`} 
+                src={icon.src}
+                alt={icon.alt}
+                className={`${icon.h} w-auto object-contain transition-transform hover:scale-110`}
               />
             ))}
           </div>
@@ -271,16 +271,16 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
 
   return (
     <div className="fixed inset-0 z-[110] flex items-start justify-end">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={doClose} aria-hidden />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-500" onClick={doClose} aria-hidden />
 
-      <aside className="relative z-30 w-full max-w-[540px] h-[92vh] m-4 bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 rounded-lg shadow-2xl overflow-auto transform translate-x-0 transition-transform duration-400">
+      <aside className="relative z-30 w-full max-w-[540px] h-full sm:h-[92vh] sm:m-4 bg-white dark:bg-[#050505] border border-black/5 dark:border-white/5 sm:rounded-lg shadow-2xl overflow-auto animate-in slide-in-from-right duration-500 ease-out transition-all">
         <div className="flex items-center justify-between p-4 border-b border-black/5 dark:border-white/5">
           <div className="flex items-center gap-3">
             <button onClick={doClose} className="flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.2em] text-black dark:text-white hover:text-blue-500 transition">
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
           </div>
-          <button onClick={doClose} aria-label="Close preview" className="p-2 text-black/50 dark:text-white/50 hover:text-blue-500">
+          <button onClick={doClose} aria-label="Close preview" className="p-2 text-black/50 dark:text-white/50 hover:text-blue-500 transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>

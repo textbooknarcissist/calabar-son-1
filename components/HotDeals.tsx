@@ -194,11 +194,11 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 sm:p-12">
-      <div className="absolute inset-0 bg-white/95 dark:bg-black/95 backdrop-blur-2xl animate-in fade-in duration-500" onClick={onClose} />
-      <div className="relative w-full max-w-5xl bg-white dark:bg-[#050505] border border-black/5 dark:border-white/10 flex flex-col h-full max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-500 shadow-2xl">
+      <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-xl animate-in fade-in duration-500" onClick={onClose} />
+      <div className="relative w-full max-w-5xl bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md border border-black/10 dark:border-white/20 flex flex-col h-full max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-500 shadow-2xl">
 
         {/* Header */}
-        <div className="p-8 border-b border-black/5 dark:border-white/5 flex justify-between items-center">
+        <div className="p-8 border-b border-black/10 dark:border-white/10 flex justify-between items-center bg-white/20 dark:bg-white/5">
           <div>
             <span className="text-blue-500 text-[9px] font-black uppercase tracking-[0.4em] block mb-1">Configuration Utility</span>
             <h3 className="text-2xl font-black uppercase tracking-tighter">SELECT YOUR {capacity} PIECES</h3>
@@ -209,14 +209,14 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
         </div>
 
         {/* Selection Area */}
-        <div className="flex-1 overflow-y-auto p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 custom-scrollbar bg-transparent">
           {ALL_PRODUCTS.map(product => {
             const isSelected = selected.find(p => p.id === product.id);
             return (
               <div
                 key={product.id}
                 onClick={() => toggleProduct(product)}
-                className={`relative cursor-pointer border group transition-all duration-500 ${isSelected ? 'border-blue-500 bg-blue-500/5' : 'border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20'}`}
+                className={`relative cursor-pointer border group transition-all duration-500 ${isSelected ? 'border-blue-500 bg-blue-500/10 shadow-lg' : 'border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 <div className="aspect-square overflow-hidden mb-3">
                   <img src={product.image} alt={product.name} className={`w-full h-full object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
@@ -235,10 +235,10 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
         </div>
 
         {/* Footer */}
-        <div className="p-8 border-t border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 flex flex-col sm:flex-row justify-between items-center gap-6">
+        <div className="p-8 border-t border-black/10 dark:border-white/10 bg-white/40 dark:bg-black/40 flex flex-col sm:flex-row justify-between items-center gap-6">
           <div className="flex gap-4">
             {Array.from({ length: capacity }).map((_, i) => (
-              <div key={i} className={`w-12 h-16 border-2 border-dashed flex items-center justify-center transition-all duration-500 ${i < selected.length ? 'border-blue-500 bg-blue-500/10 scale-105' : 'border-black/10 dark:border-white/10'}`}>
+              <div key={i} className={`w-12 h-16 border-2 border-dashed flex items-center justify-center transition-all duration-500 ${i < selected.length ? 'border-blue-500 bg-blue-500/20 scale-105 shadow-inner' : 'border-black/10 dark:border-white/10'}`}>
                 {i < selected.length ? (
                   <img src={selected[i].image} className="w-full h-full object-cover animate-in fade-in zoom-in-75" />
                 ) : (
@@ -251,7 +251,7 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
           <button
             disabled={selected.length < capacity}
             onClick={() => onComplete(selected)}
-            className={`px-12 py-5 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-500 ${selected.length === capacity ? 'bg-blue-500 text-white shadow-xl scale-105 hover:scale-110' : 'bg-black/20 dark:bg-white/10 text-black/20 dark:text-white/20 cursor-not-allowed'}`}
+            className={`px-12 py-5 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-500 ${selected.length === capacity ? 'bg-blue-500 text-white shadow-xl scale-105 hover:scale-110 hover:shadow-blue-500/30' : 'bg-black/20 dark:bg-white/10 text-black/20 dark:text-white/20 cursor-not-allowed'}`}
           >
             Add Bundle to Bag
           </button>
