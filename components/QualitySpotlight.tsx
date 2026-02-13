@@ -7,11 +7,11 @@ const QualitySpotlight: React.FC = () => {
       <div className="flex flex-col md:flex-row min-h-[80vh]">
         {/* Left Side: Visuals - Macro focus */}
         <div className="w-full md:w-1/2 relative overflow-hidden h-[50vh] md:h-auto border-b md:border-b-0 md:border-r border-black/5 dark:border-white/5">
-          <img 
-            src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?auto=format&fit=crop&q=80&w=1200" 
-            alt="Craftsmanship Close-up" 
-            className="w-full h-full object-cover grayscale contrast-125 dark:contrast-100 dark:opacity-80 hover:grayscale-0 transition-all duration-1000"
-          />
+            <img 
+              src="/assets/images/features/craftmanship-detail.webp" 
+              alt="Craftsmanship Close-up" 
+              className="w-full h-full object-cover contrast-125 dark:contrast-100 dark:opacity-80 transition-all duration-1000"
+            />
           <div className="absolute inset-0 bg-white/10 dark:bg-black/40" />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="border border-black/10 dark:border-white/20 p-8 md:p-12 backdrop-blur-md bg-white/30 dark:bg-black/20">
