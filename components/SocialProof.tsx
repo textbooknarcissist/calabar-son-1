@@ -4,7 +4,7 @@ import { Instagram } from 'lucide-react';
 
 const SocialProof: React.FC = () => {
   return (
-    <section className="bg-white dark:bg-black py-24 text-black dark:text-white">
+    <section id="community-section" className="py-24 md:py-32 bg-white dark:bg-black transition-colors duration-500">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4 font-heading">STYLED BY YOU</h3>

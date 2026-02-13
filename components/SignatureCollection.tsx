@@ -91,7 +91,10 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
       onMouseLeave={() => setHovered(false)}
     >
       {/* Gallery Frame */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#f7f7f7] dark:bg-[#0d0d0d] mb-8 transition-all duration-700 ease-in-out border border-transparent group-hover:border-black/5 dark:group-hover:border-white/10 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+      <div
+        className="relative aspect-[4/5] overflow-hidden bg-[#f7f7f7] dark:bg-[#0d0d0d] mb-8 transition-all duration-700 ease-in-out border border-transparent group-hover:border-black/5 dark:group-hover:border-white/10 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] cursor-pointer"
+        onClick={onQuickView}
+      >
 
         {/* Main Image */}
         <img
@@ -120,11 +123,10 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
           </div>
         )}
 
-        {/* Action Controls */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
+        <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 transition-all duration-500 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
           <button
             onClick={(e) => { e.stopPropagation(); onQuickView(); }}
-            className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white hover:shadow-xl hover:scale-105 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white hover:shadow-xl hover:scale-105`}
           >
             Quick View
           </button>
@@ -134,7 +136,7 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
         <button
           onClick={handleAddToCart}
           disabled={added}
-          className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
+          className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full pointer-events-none'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
         >
           <span className="flex items-center justify-center gap-3">
             {added ? <><Check className="w-3 h-3" /> Piece Secured</> : <><Plus className="w-3 h-3 group-hover:scale-125 transition-transform" /> Add to Order</>}
@@ -234,6 +236,7 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
 };
 
 const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToCart: (p: Product) => void }> = ({ product, onClose, onAddToCart }) => {
+  const [added, setAdded] = useState(false);
   const pushedRef = useRef(false);
 
   useEffect(() => {
@@ -267,6 +270,12 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
     } else {
       onClose();
     }
+  };
+
+  const handleAddToCart = () => {
+    onAddToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -323,8 +332,12 @@ const QuickViewModal: React.FC<{ product: Product; onClose: () => void; onAddToC
             </div>
 
             <div className="flex flex-col gap-3">
-              <button onClick={() => onAddToCart(product)} className="w-full bg-black dark:bg-white text-white dark:text-black py-3 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white hover:shadow transition-all">
-                <ShoppingCart className="w-4 h-4 inline-block mr-2" /> Add to Order
+              <button
+                onClick={handleAddToCart}
+                disabled={added}
+                className={`w-full py-3 font-black uppercase tracking-[0.3em] text-[10px] transition-all flex items-center justify-center gap-2 ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow'}`}
+              >
+                {added ? <><Check className="w-4 h-4" /> Piece Secured</> : <><ShoppingCart className="w-4 h-4" /> Add to Order</>}
               </button>
               <button onClick={doClose} className="w-full border border-black/10 dark:border-white/10 text-black dark:text-white py-3 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all">
                 Full Specifications <ChevronRight className="w-4 h-4 inline-block ml-2" />

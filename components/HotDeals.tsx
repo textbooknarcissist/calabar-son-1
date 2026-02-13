@@ -49,7 +49,7 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
   };
 
   return (
-    <section className="relative bg-white dark:bg-black py-24 border-y border-black/5 dark:border-white/5 overflow-hidden text-black dark:text-white">
+    <section id="deals-section" className="relative bg-white dark:bg-black py-24 border-y border-black/5 dark:border-white/5 overflow-hidden text-black dark:text-white">
       {/* Decorative Background Text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-[0.02] dark:opacity-[0.05] transition-opacity duration-700">
         <span className="text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap">

@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-white dark:bg-black px-6">
+    <section id="hero-section" className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-white dark:bg-black px-6">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-white/40 dark:from-black/40 via-white/0 dark:via-black/0 to-transparent z-10" />
@@ -43,7 +43,10 @@ const Hero: React.FC = () => {
             <div className="absolute top-0 left-0 h-full w-0 bg-blue-500 transition-all duration-300 group-hover:w-full" />
           </button>
 
-          <button className="px-10 py-4 border border-black/20 dark:border-white/20 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-black dark:text-white font-bold uppercase tracking-widest text-xs transition-all w-full sm:w-auto backdrop-blur-md">
+          <button
+            onClick={() => document.getElementById('quality-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="px-10 py-4 border border-black/20 dark:border-white/20 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-black dark:text-white font-bold uppercase tracking-widest text-xs transition-all w-full sm:w-auto backdrop-blur-md"
+          >
             The Story
           </button>
         </div>
