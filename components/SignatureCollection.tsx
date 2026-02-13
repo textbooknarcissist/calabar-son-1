@@ -123,7 +123,24 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
           </div>
         )}
 
-        <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 transition-all duration-500 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+        {/* Mobile Persistent Actions */}
+        <div className="md:hidden absolute bottom-0 left-0 w-full p-2 flex gap-2 z-20">
+          <button
+            onClick={(e) => { e.stopPropagation(); onAddToCart(product); setAdded(true); setTimeout(() => setAdded(false), 2000); }}
+            disabled={added}
+            className={`flex-1 py-3 rounded-md font-black uppercase tracking-[0.2em] text-[8px] transition-all ${added ? 'bg-green-500 text-white' : 'bg-black/80 dark:bg-white/80 backdrop-blur-md text-white dark:text-black hover:bg-blue-500'}`}
+          >
+            {added ? 'Secured' : 'Add'}
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onQuickView(); }}
+            className="flex-1 py-3 rounded-md bg-white/20 backdrop-blur-md text-white border border-white/30 text-[8px] font-black uppercase tracking-[0.2em]"
+          >
+            View
+          </button>
+        </div>
+
+        <div className={`hidden md:flex absolute inset-0 flex-col items-center justify-center gap-3 p-6 transition-all duration-500 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
           <button
             onClick={(e) => { e.stopPropagation(); onQuickView(); }}
             className={`w-40 bg-white/10 backdrop-blur-xl text-white border border-white/20 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-500 hover:bg-white hover:text-black hover:border-white hover:shadow-xl hover:scale-105`}
@@ -136,7 +153,7 @@ const ProductCard: React.FC<{ product: Product; onQuickView: () => void; onAddTo
         <button
           onClick={handleAddToCart}
           disabled={added}
-          className={`absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full pointer-events-none'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
+          className={`hidden md:block absolute bottom-0 left-0 w-full py-5 font-black uppercase tracking-[0.3em] text-[9px] transition-all duration-500 transform ${hovered ? 'translate-y-0' : 'translate-y-full pointer-events-none'} ${added ? 'bg-green-500 text-white' : 'bg-black dark:bg-white text-white dark:text-black hover:bg-blue-500 hover:text-white hover:shadow-lg'}`}
         >
           <span className="flex items-center justify-center gap-3">
             {added ? <><Check className="w-3 h-3" /> Piece Secured</> : <><Plus className="w-3 h-3 group-hover:scale-125 transition-transform" /> Add to Order</>}

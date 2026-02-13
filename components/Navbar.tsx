@@ -26,12 +26,12 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
   };
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-1000 border-b ${scrolled
-      ? 'bg-white/70 dark:bg-black/50 backdrop-blur-2xl py-4 shadow-2xl border-black/5 dark:border-white/10'
-      : 'bg-transparent py-8 border-transparent shadow-none'
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 border-b ${scrolled
+        ? 'bg-white/95 dark:bg-black/90 backdrop-blur-3xl py-3 md:py-4 shadow-2xl border-black/10 dark:border-white/20'
+        : 'bg-white/10 dark:bg-black/10 backdrop-blur-md py-6 md:py-8 border-transparent shadow-none'
       }`}>
-      <div className="container mx-auto px-6 flex justify-between items-center">
-        <div className="flex items-center space-x-8">
+      <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
+        <div className="flex items-center space-x-4 md:space-x-8">
           <Menu
             className="w-6 h-6 cursor-pointer md:hidden text-black dark:text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -50,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2">
-          <h1 className="text-xl md:text-2xl font-black tracking-tighter uppercase font-heading text-black dark:text-white">
+          <h1 className="text-lg md:text-2xl font-black tracking-tighter uppercase font-heading text-black dark:text-white">
             CALABAR <span className="text-blue-500">SON</span>
           </h1>
         </div>
@@ -68,8 +68,6 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
             )}
           </button>
 
-          {/* Search removed per project request */}
-
           <div onClick={onOpenCart} className="relative cursor-pointer group text-black dark:text-white">
             <ShoppingBag className="w-5 h-5 group-hover:text-blue-500 transition-colors" />
             {cartCount > 0 && (
@@ -81,22 +79,41 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      <div className={`fixed inset-0 bg-white dark:bg-black z-[60] transition-transform duration-500 md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex justify-between items-center p-8 border-b border-black/5 dark:border-white/5">
-          <h2 className="text-xl font-black uppercase tracking-tighter">Menu</h2>
-          <button onClick={() => setMobileMenuOpen(false)}>
-            <X className="w-6 h-6" />
-          </button>
+      {/* Mobile Drawer (Compact Glass Design) */}
+      <>
+        {/* Backdrop for mobile menu */}
+        <div
+          className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-500 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        <div className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#050505] z-[60] shadow-2xl transition-transform duration-500 md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+          <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+            <h2 className="text-sm font-black uppercase tracking-tighter font-heading text-black dark:text-white">
+              CALABAR <span className="text-blue-500">SON</span>
+            </h2>
+            <button onClick={() => setMobileMenuOpen(false)} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <ul className="p-8 space-y-8 flex-1">
+            {navLinks.map((link, idx) => (
+              <li
+                key={link.id}
+                onClick={() => scrollTo(link.id)}
+                className="text-xl font-black uppercase tracking-tighter hover:text-blue-500 transition-all transform hover:translate-x-2 flex items-center justify-between group"
+                style={{ transitionDelay: `${idx * 50}ms` }}
+              >
+                <span>{link.name}</span>
+                <span className="w-6 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300" />
+              </li>
+            ))}
+          </ul>
+          <div className="p-8 border-t border-black/5 dark:border-white/5">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/20 dark:text-white/20">Archive Edition // MMXXIV</p>
+          </div>
         </div>
-        <ul className="p-8 space-y-8 text-2xl font-black uppercase tracking-tighter">
-          {navLinks.map(link => (
-            <li key={link.id} onClick={() => scrollTo(link.id)} className="hover:text-blue-500 transition-colors">
-              {link.name}
-            </li>
-          ))}
-        </ul>
-      </div>
+      </>
     </nav>
   );
 };

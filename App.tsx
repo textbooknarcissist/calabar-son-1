@@ -15,16 +15,31 @@ import { Product, CartItem } from './types';
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [cart, setCart] = useState<CartItem[]>([]);
+
+  // Initialize cart from localStorage if available
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('calabar_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  // Persistence: Save cart to localStorage
+  useEffect(() => {
+    localStorage.setItem('calabar_cart', JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
-    
+
     if (isDarkMode) {
       document.body.classList.add('dark');
     } else {
@@ -40,9 +55,9 @@ const App: React.FC = () => {
     setCart(prevCart => {
       const existing = prevCart.find(item => item.product.id === product.id);
       if (existing) {
-        return prevCart.map(item => 
-          item.product.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 } 
+        return prevCart.map(item =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
@@ -74,7 +89,7 @@ const App: React.FC = () => {
     <div className={`min-h-screen theme-transition selection:bg-blue-500 selection:text-white bg-white dark:bg-black text-black dark:text-white`}>
       {/* Show checkout or main content */}
       {isCheckingOut ? (
-        <Checkout 
+        <Checkout
           cart={cart}
           onClose={() => {
             setIsCheckingOut(false);
@@ -83,10 +98,10 @@ const App: React.FC = () => {
         />
       ) : (
         <>
-          <Navbar 
-            scrolled={scrolled} 
-            isDarkMode={isDarkMode} 
-            toggleTheme={toggleTheme} 
+          <Navbar
+            scrolled={scrolled}
+            isDarkMode={isDarkMode}
+            toggleTheme={toggleTheme}
             cartCount={cartCount}
             onOpenCart={() => setIsCartOpen(true)}
           />
@@ -98,12 +113,12 @@ const App: React.FC = () => {
             <SocialProof />
           </main>
           <Footer />
-          
+
           <ScrollToTop />
-          
-          <CartDrawer 
-            isOpen={isCartOpen} 
-            onClose={() => setIsCartOpen(false)} 
+
+          <CartDrawer
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
             cart={cart}
             onRemove={removeFromCart}
             onUpdateQuantity={updateQuantity}
