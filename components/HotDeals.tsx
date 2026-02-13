@@ -135,23 +135,24 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
           <div className="flex gap-4 mt-16 justify-end items-center">
             <div className="flex gap-2 mr-4">
               {HOT_DEALS.map((_, i) => (
-                <div
+                <button
                   key={i}
-                  className={`h-1 transition-all duration-500 ${i === activeIndex ? 'w-8 bg-blue-500' : 'w-2 bg-black/10 dark:bg-white/10'}`}
+                  onClick={() => setActiveIndex(i)}
+                  className={`h-1 transition-all duration-500 hover:bg-blue-300 ${i === activeIndex ? 'w-8 bg-blue-500' : 'w-2 bg-black/10 dark:bg-white/10'}`}
                 />
               ))}
             </div>
             <button
               onClick={() => setActiveIndex(prev => (prev === 0 ? HOT_DEALS.length - 1 : prev - 1))}
               aria-label="Previous deal"
-              className="p-5 border border-black/10 dark:border-white/10 hover:border-blue-500 hover:bg-blue-500/5 transition-all group/nav"
+              className="p-5 border border-black/10 dark:border-white/10 hover:border-blue-500 hover:bg-blue-500 hover:text-white transition-all group/nav"
             >
               <ArrowLeft className="w-6 h-6 group-hover/nav:-translate-x-1 transition-transform" />
             </button>
             <button
               onClick={() => setActiveIndex(prev => (prev === HOT_DEALS.length - 1 ? 0 : prev + 1))}
               aria-label="Next deal"
-              className="p-5 border border-black/10 dark:border-white/10 hover:border-blue-500 hover:bg-blue-500/5 transition-all group/nav"
+              className="p-5 border border-black/10 dark:border-white/10 hover:border-blue-500 hover:bg-blue-500 hover:text-white transition-all group/nav"
             >
               <ArrowRight className="w-6 h-6 group-hover/nav:translate-x-1 transition-transform" />
             </button>
@@ -203,7 +204,7 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
             <span className="text-blue-500 text-[9px] font-black uppercase tracking-[0.4em] block mb-1">Configuration Utility</span>
             <h3 className="text-2xl font-black uppercase tracking-tighter">SELECT YOUR {capacity} PIECES</h3>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-black/5 dark:hover:bg-white/20 hover:rotate-90 rounded-full transition-all duration-300">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -216,7 +217,7 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
               <div
                 key={product.id}
                 onClick={() => toggleProduct(product)}
-                className={`relative cursor-pointer border group transition-all duration-500 ${isSelected ? 'border-blue-500 bg-blue-500/10 shadow-lg' : 'border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/5 dark:hover:bg-white/5'}`}
+                className={`relative cursor-pointer border group transition-all duration-500 hover:shadow-lg hover:-translate-y-1 ${isSelected ? 'border-blue-500 bg-blue-500/10 shadow-lg' : 'border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/5 dark:hover:bg-white/5'}`}
               >
                 <div className="aspect-square overflow-hidden mb-3">
                   <img src={product.image} alt={product.name} className={`w-full h-full object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
@@ -251,7 +252,7 @@ const BundleConfigModal: React.FC<{ deal: Bundle; onClose: () => void; onComplet
           <button
             disabled={selected.length < capacity}
             onClick={() => onComplete(selected)}
-            className={`px-12 py-5 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-500 ${selected.length === capacity ? 'bg-blue-500 text-white shadow-xl scale-105 hover:scale-110 hover:shadow-blue-500/30' : 'bg-black/20 dark:bg-white/10 text-black/20 dark:text-white/20 cursor-not-allowed'}`}
+            className={`px-12 py-5 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-500 ${selected.length === capacity ? 'bg-blue-500 text-white shadow-xl scale-105 hover:scale-110 hover:shadow-blue-500/40 hover:bg-blue-600' : 'bg-black/20 dark:bg-white/10 text-black/20 dark:text-white/20 cursor-not-allowed'}`}
           >
             Add Bundle to Bag
           </button>

@@ -11,16 +11,16 @@ export const SIGNATURE_PRODUCTS: Product[] = [
     id: '1',
     name: 'ONYX STEALTH SNAPBACK',
     price: 45000,
-    image: '/assets/images/products/onyx-stealth-main.jpg',
-    hoverImage: '/assets/images/products/onyx-stealth-hover.jpg',
+    image: '/assets/images/products/onyx-stealth-main.avif',
+    hoverImage: '/assets/images/products/onyx-stealth-hover.avif',
     category: 'Signature'
   },
   {
     id: '2',
     name: 'URBAN NOMAD TRUCKER',
     price: 35000,
-    image: '/assets/images/products/urban-nomad-main.jpg',
-    hoverImage: '/assets/images/products/urban-nomad-hover.jpg',
+    image: '/assets/images/products/urban-nomad-main.avif',
+    hoverImage: '/assets/images/products/urban-nomad-hover.avif',
     category: 'Limited'
   },
   {
@@ -68,7 +68,7 @@ export const HOT_DEALS: Bundle[] = [
     price: 95000,
     originalPrice: 125000,
     description: '3 Premium Caps of your choice + Signature Case.',
-    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1000&auto=format&fit=crop'
+    image: '/assets/images/bundles/starter-pack.webp'
   },
   {
     id: 'b2',
@@ -76,15 +76,15 @@ export const HOT_DEALS: Bundle[] = [
     price: 65000,
     originalPrice: 80000,
     description: 'The Stealth and The Nomad in a custom dual pack.',
-    image: 'https://images.unsplash.com/photo-1572451479139-6a308211d8be?q=80&w=1000&auto=format&fit=crop'
+    image: '/assets/images/bundles/core-collection.webp'
   }
 ];
 
 export const SOCIAL_POSTS: SocialPost[] = [
-  { id: 's1', username: '@marcus_urban', image: 'https://images.unsplash.com/photo-1523395243481-163f8f27df54?q=80&w=600&auto=format&fit=crop' },
-  { id: 's2', username: '@lea.fits', image: 'https://images.unsplash.com/photo-1542332213-31f87348057f?q=80&w=600&auto=format&fit=crop' },
-  { id: 's3', username: '@dre_styles', image: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?q=80&w=600&auto=format&fit=crop' },
-  { id: 's4', username: '@street_shutter', image: 'https://images.unsplash.com/photo-1514332930284-8e753cd129ef?q=80&w=600&auto=format&fit=crop' },
-  { id: 's5', username: '@calabar_fan', image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop' },
-  { id: 's6', username: '@vibe_check', image: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?q=80&w=600&auto=format&fit=crop' }
+  { id: 's1', username: '@marcus_urban', image: '/assets/images/social/marcus-urban.avif' },
+  { id: 's2', username: '@lea.fits', image: '/assets/images/social/lea-fits.avif' },
+  { id: 's3', username: '@dre_styles', image: '/assets/images/social/dre-styles.avif' },
+  { id: 's4', username: '@street_shutter', image: '/assets/images/social/street-shutter.avif' },
+  { id: 's5', username: '@calabar_fan', image: '/assets/images/social/calabar-fan.avif' },
+  { id: 's6', username: '@vibe_check', image: '/assets/images/social/vibe-check.avif' }
 ];
