@@ -79,36 +79,58 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
         </div>
       </div>
 
-      {/* Mobile Popup Menu (Compact Glass Design) */}
+      {/* Immersive Mobile Overlay (Centered Glass Design) */}
       <>
         {/* Backdrop for mobile menu */}
         <div
-          className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          className={`fixed inset-0 bg-black/60 backdrop-blur-md z-[55] md:hidden transition-opacity duration-500 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           onClick={() => setMobileMenuOpen(false)}
         />
 
-        <div className={`fixed top-[72px] left-6 w-[240px] bg-white/10 dark:bg-black/20 backdrop-blur-2xl z-[60] shadow-2xl transition-all duration-300 md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'} flex flex-col border border-black/10 dark:border-white/20 rounded-xl overflow-hidden`}>
-          <div className="flex justify-between items-center p-4 border-b border-black/10 dark:border-white/10 bg-white/10 dark:bg-white/5">
-            <h2 className="text-[10px] font-black uppercase tracking-widest text-blue-500">Navigation</h2>
-            <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
-              <X className="w-4 h-4 text-black dark:text-white" />
+        <div className={`fixed inset-x-4 top-[84px] h-[75vh] bg-white/80 dark:bg-black/85 backdrop-blur-3xl z-[60] shadow-2xl transition-all duration-700 md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'} flex flex-col border border-black/10 dark:border-white/10 rounded-[2rem] overflow-hidden`}>
+          {/* Header Branding in Overlay */}
+          <div className="p-8 border-b border-black/5 dark:border-white/5 flex justify-center items-center relative">
+            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-blue-500">
+              CALABAR <span className="opacity-50">SON</span>
+            </h2>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="absolute right-8 p-2 overflow-hidden group hover:rotate-90 transition-transform duration-500"
+            >
+              <X className="w-5 h-5 text-black dark:text-white" />
             </button>
           </div>
-          <ul className="p-4 space-y-4 flex-1">
-            {navLinks.map((link, idx) => (
-              <li
-                key={link.id}
-                onClick={() => scrollTo(link.id)}
-                className="text-sm font-black uppercase tracking-tight text-black dark:text-white hover:text-blue-500 transition-all flex items-center justify-between group"
-                style={{ transitionDelay: `${idx * 40}ms` }}
-              >
-                <span>{link.name}</span>
-                <span className="w-4 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300" />
-              </li>
-            ))}
-          </ul>
-          <div className="p-4 border-t border-black/10 dark:border-white/10 bg-white/5">
-            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Archive Edition // MMXXIV</p>
+
+          {/* Centered Navigation Links */}
+          <div className="flex-1 flex flex-col items-center justify-center p-8">
+            <ul className="space-y-10 text-center w-full">
+              {navLinks.map((link, idx) => (
+                <li
+                  key={link.id}
+                  onClick={() => scrollTo(link.id)}
+                  className={`group relative flex flex-col items-center justify-center transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                  style={{ transitionDelay: `${idx * 100 + 200}ms` }}
+                >
+                  <span className="text-3xl font-black uppercase tracking-tighter text-black dark:text-white group-hover:text-blue-500 transition-colors duration-300">
+                    {link.name}
+                  </span>
+                  <div className="w-0 h-1 bg-blue-500 mt-2 group-hover:w-12 transition-all duration-500" />
+                  <span className="absolute -top-4 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 text-6xl font-black uppercase tracking-tighter whitespace-nowrap transition-opacity pointer-events-none">
+                    {link.name}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Footer Branding in Overlay */}
+          <div className="p-8 border-t border-black/5 dark:border-white/5 flex flex-col items-center gap-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 dark:text-white/20">Archive Edition // MMXXIV</p>
+            <div className="flex gap-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20" />
+            </div>
           </div>
         </div>
       </>
