@@ -87,7 +87,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
           onClick={() => setMobileMenuOpen(false)}
         />
 
-        <div className={`fixed inset-x-4 top-[84px] h-[75vh] bg-white/80 dark:bg-black/85 backdrop-blur-3xl z-[60] shadow-2xl transition-all duration-700 md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'} flex flex-col border border-black/10 dark:border-white/10 rounded-[2rem] overflow-hidden`}>
+        <div className={`fixed inset-x-4 top-[84px] h-[75vh] bg-white dark:bg-black z-[60] shadow-2xl transition-all duration-700 md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'} flex flex-col border border-black/10 dark:border-white/10 rounded-[2rem] overflow-hidden`}>
           {/* Header Branding in Overlay */}
           <div className="p-8 border-b border-black/5 dark:border-white/5 flex justify-center items-center relative">
             <h2 className="text-xs font-black uppercase tracking-[0.3em] text-blue-500">
@@ -125,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
 
           {/* Footer Branding in Overlay */}
           <div className="p-8 border-t border-black/5 dark:border-white/5 flex flex-col items-center gap-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 dark:text-white/20">Archive Edition // MMXXIV</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 dark:text-white/20">Archive Edition // MMXXVI</p>
             <div className="flex gap-4">
               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
               <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />

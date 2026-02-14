@@ -14,12 +14,12 @@ const Footer: React.FC = () => {
               Join the inner circle. Be the first to know about secret drops, exclusive collaborations, and limited edition colorways.
             </p>
             <div className="relative max-w-md">
-              <input 
-                type="email" 
-                placeholder="EMAIL ADDRESS" 
+              <input
+                type="email"
+                placeholder="EMAIL ADDRESS"
                 className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-6 py-4 text-xs font-bold uppercase tracking-widest focus:outline-none focus:border-blue-500 transition-colors placeholder:text-black/20 dark:placeholder:text-white/20"
               />
-            <button aria-label="Subscribe" className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:translate-x-1 hover:scale-125">
+              <button aria-label="Subscribe" className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:translate-x-1 hover:scale-125">
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-black/5 dark:border-white/5 gap-8">
           <p className="text-[10px] text-black/30 dark:text-white/30 font-bold uppercase tracking-[0.3em]">
-            &copy; 2024 Calabar Son. Designed for the Streets.
+            &copy; 2026 Calabar Son. Designed for the Streets.
           </p>
           <div className="flex items-center gap-6 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all dark:invert">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="Paypal" className="h-4" />
