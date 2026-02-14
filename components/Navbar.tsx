@@ -27,8 +27,8 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
 
   return (
     <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 border-b ${scrolled
-        ? 'bg-white/95 dark:bg-black/90 backdrop-blur-3xl py-3 md:py-4 shadow-2xl border-black/10 dark:border-white/20'
-        : 'bg-white/10 dark:bg-black/10 backdrop-blur-md py-6 md:py-8 border-transparent shadow-none'
+      ? 'bg-white/95 dark:bg-black/90 backdrop-blur-3xl py-3 md:py-4 shadow-2xl border-black/10 dark:border-white/20'
+      : 'bg-white/10 dark:bg-black/10 backdrop-blur-md py-6 md:py-8 border-transparent shadow-none'
       }`}>
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
         <div className="flex items-center space-x-4 md:space-x-8">
@@ -79,38 +79,36 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isDarkMode, toggleTheme, cart
         </div>
       </div>
 
-      {/* Mobile Drawer (Compact Glass Design) */}
+      {/* Mobile Popup Menu (Compact Glass Design) */}
       <>
         {/* Backdrop for mobile menu */}
         <div
-          className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-500 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           onClick={() => setMobileMenuOpen(false)}
         />
 
-        <div className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#050505] z-[60] shadow-2xl transition-transform duration-500 md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
-          <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
-            <h2 className="text-sm font-black uppercase tracking-tighter font-heading text-black dark:text-white">
-              CALABAR <span className="text-blue-500">SON</span>
-            </h2>
-            <button onClick={() => setMobileMenuOpen(false)} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
-              <X className="w-5 h-5" />
+        <div className={`fixed top-[72px] left-6 w-[240px] bg-white/10 dark:bg-black/20 backdrop-blur-2xl z-[60] shadow-2xl transition-all duration-300 md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'} flex flex-col border border-black/10 dark:border-white/20 rounded-xl overflow-hidden`}>
+          <div className="flex justify-between items-center p-4 border-b border-black/10 dark:border-white/10 bg-white/10 dark:bg-white/5">
+            <h2 className="text-[10px] font-black uppercase tracking-widest text-blue-500">Navigation</h2>
+            <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
+              <X className="w-4 h-4 text-black dark:text-white" />
             </button>
           </div>
-          <ul className="p-8 space-y-8 flex-1">
+          <ul className="p-4 space-y-4 flex-1">
             {navLinks.map((link, idx) => (
               <li
                 key={link.id}
                 onClick={() => scrollTo(link.id)}
-                className="text-xl font-black uppercase tracking-tighter hover:text-blue-500 transition-all transform hover:translate-x-2 flex items-center justify-between group"
-                style={{ transitionDelay: `${idx * 50}ms` }}
+                className="text-sm font-black uppercase tracking-tight text-black dark:text-white hover:text-blue-500 transition-all flex items-center justify-between group"
+                style={{ transitionDelay: `${idx * 40}ms` }}
               >
                 <span>{link.name}</span>
-                <span className="w-6 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300" />
+                <span className="w-4 h-px bg-blue-500 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-300" />
               </li>
             ))}
           </ul>
-          <div className="p-8 border-t border-black/5 dark:border-white/5">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/20 dark:text-white/20">Archive Edition // MMXXIV</p>
+          <div className="p-4 border-t border-black/10 dark:border-white/10 bg-white/5">
+            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-black/30 dark:text-white/30">Archive Edition // MMXXIV</p>
           </div>
         </div>
       </>

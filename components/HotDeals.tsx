@@ -52,7 +52,7 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
     <section id="deals-section" className="relative bg-white dark:bg-black py-24 border-y border-black/5 dark:border-white/5 overflow-hidden text-black dark:text-white">
       {/* Decorative Background Text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-[0.02] dark:opacity-[0.05] transition-opacity duration-700">
-        <span className="text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap">
+        <span className="text-[12vw] md:text-[20vw] font-black uppercase tracking-tighter leading-none whitespace-nowrap">
           EXCLUSIVE OFFER
         </span>
       </div>
@@ -60,15 +60,15 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
           <div className="animate-fade-in">
-            <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter font-heading text-blue-500">
+            <h3 className="text-3xl md:text-7xl font-black uppercase tracking-tighter font-heading text-blue-500">
               HOT DEALS
             </h3>
-            <p className="uppercase text-xs tracking-[0.3em] font-bold text-black/40 dark:text-white/40 mt-2">Limited Time Exclusives</p>
+            <p className="uppercase text-[10px] md:text-xs tracking-[0.3em] font-bold text-black/40 dark:text-white/40 mt-2">Limited Time Exclusives</p>
           </div>
 
-          <div className="flex items-center gap-4 bg-black/5 dark:bg-[#111] px-6 py-3 border border-blue-500/20 backdrop-blur-sm">
-            <Clock className="w-5 h-5 text-blue-500" />
-            <div className="flex gap-4 font-mono text-2xl font-bold">
+          <div className="flex items-center gap-3 md:gap-4 bg-black/5 dark:bg-[#111] px-4 py-2 md:px-6 md:py-3 border border-blue-500/20 backdrop-blur-sm">
+            <Clock className="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
+            <div className="flex gap-2 md:gap-4 font-mono text-lg md:text-2xl font-bold">
               <span>{String(timeLeft.h).padStart(2, '0')}h</span>
               <span className="animate-pulse">:</span>
               <span>{String(timeLeft.m).padStart(2, '0')}m</span>
@@ -97,7 +97,7 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
                 <div className="inline-block border border-blue-500/30 px-3 py-1 bg-blue-500/5 backdrop-blur-sm animate-pulse">
                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Verified Offer Available</span>
                 </div>
-                <h4 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-tight group-hover:text-blue-500 transition-colors duration-300">
+                <h4 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-tight group-hover:text-blue-500 transition-colors duration-300">
                   {deal.title}
                 </h4>
               </div>
@@ -109,15 +109,15 @@ const HotDeals: React.FC<HotDealsProps> = ({ onAddToCart }) => {
               <div className="flex flex-col gap-1">
                 <p className="text-[10px] uppercase tracking-widest font-bold text-black/30 dark:text-white/30">Limited time price</p>
                 <div className="flex items-baseline gap-4">
-                  <span className="text-6xl font-black text-blue-500 drop-shadow-sm">{CURRENCY}{deal.price.toLocaleString()}</span>
-                  <span className="text-2xl text-black/30 dark:text-white/30 line-through decoration-blue-500/30">{CURRENCY}{deal.originalPrice.toLocaleString()}</span>
+                  <span className="text-4xl md:text-6xl font-black text-blue-500 drop-shadow-sm">{CURRENCY}{deal.price.toLocaleString()}</span>
+                  <span className="text-xl md:text-2xl text-black/30 dark:text-white/30 line-through decoration-blue-500/30">{CURRENCY}{deal.originalPrice.toLocaleString()}</span>
                 </div>
               </div>
 
               <button
                 onClick={handleClaimOffer}
                 disabled={isProcessing}
-                className="relative w-full bg-black dark:bg-white text-white dark:text-black py-7 font-black uppercase tracking-[0.3em] text-xs transition-all duration-500 hover:bg-blue-600 hover:text-white hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/30 overflow-hidden group/btn disabled:opacity-70 disabled:cursor-wait"
+                className="relative w-full bg-black dark:bg-white text-white dark:text-black py-4 md:py-7 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs transition-all duration-500 hover:bg-blue-600 hover:text-white hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/30 overflow-hidden group/btn disabled:opacity-70 disabled:cursor-wait"
               >
                 {/* Shimmer Effect */}
                 {!isProcessing && (

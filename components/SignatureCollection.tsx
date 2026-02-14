@@ -42,9 +42,9 @@ const SignatureCollection: React.FC<SignatureCollectionProps> = ({ onAddToCart }
         <div className="flex justify-center">
           <button
             onClick={() => setIsCollectionOpen(true)}
-            className="group relative px-16 py-6 font-black uppercase tracking-[0.4em] text-[10px] transition-all overflow-hidden border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] hover:border-blue-500 hover:bg-blue-500/10"
+            className="group relative px-8 py-4 md:px-16 md:py-6 font-black uppercase tracking-[0.4em] text-[9px] md:text-[10px] transition-all overflow-hidden border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] hover:border-blue-500 hover:bg-blue-500/10"
           >
-            <span className="relative z-10 flex items-center gap-4 text-black dark:text-white group-hover:text-blue-500 transition-colors duration-300">
+            <span className="relative z-10 flex items-center gap-3 md:gap-4 text-black dark:text-white group-hover:text-blue-500 transition-colors duration-300">
               <Grid className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" /> Explore Entire Archive
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
@@ -200,8 +200,8 @@ const FullCollectionModal: React.FC<{ onClose: () => void; onQuickView: (p: Prod
             </button>
             <div className="h-10 w-px bg-black/5 dark:bg-white/5" />
             <div>
-              <h3 className="text-3xl font-black uppercase tracking-tighter font-heading text-black dark:text-white">EXTENDED ARCHIVE</h3>
-              <p className="text-black/30 dark:text-white/30 text-[9px] uppercase tracking-[0.3em] font-black mt-1">Sourcing the streets for the perfect fit</p>
+              <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter font-heading text-black dark:text-white">EXTENDED ARCHIVE</h3>
+              <p className="text-black/30 dark:text-white/30 text-[8px] md:text-[9px] uppercase tracking-[0.3em] font-black mt-1">Sourcing the streets for the perfect fit</p>
             </div>
           </div>
           <button
