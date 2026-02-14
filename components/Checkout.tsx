@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Loader2, Check, CreditCard, ShieldCheck, ArrowRight, Grid } from 'lucide-react';
 import { CartItem } from '../types';
-import { CURRENCY } from '../constants';
+import { CURRENCY, LOCATIONS } from '../constants';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -35,6 +35,8 @@ interface PaymentInfo {
   cardName: string;
   cardNumber: string;
   expiryDate: string;
+  expiryMonth: string;
+  expiryYear: string;
   cvv: string;
 }
 
@@ -54,7 +56,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
     city: '',
     state: '',
     postal: '',
-    country: '',
+    country: 'Nigeria', // Default to Nigeria
   });
 
   const [billing, setBilling] = useState<BillingInfo>({
@@ -65,20 +67,17 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
     city: '',
     state: '',
     postal: '',
-    country: '',
+    country: 'Nigeria',
   });
 
   const [payment, setPayment] = useState<PaymentInfo>({
     cardName: '',
     cardNumber: '',
     expiryDate: '',
+    expiryMonth: '',
+    expiryYear: '',
     cvv: '',
   });
-
-  const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
-  const shippingCost = 5000; // ₦5,000 flat rate
-  const tax = Math.round(subtotal * 0.075); // 7.5% tax
-  const total = subtotal + shippingCost + tax;
 
   // Validation helpers
   const validateShipping = (): boolean => {
@@ -98,12 +97,8 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
       setError('Address is required');
       return false;
     }
-    if (!shipping.city.trim() || !shipping.state.trim()) {
-      setError('City and state are required');
-      return false;
-    }
-    if (!shipping.postal.trim() || !shipping.country.trim()) {
-      setError('Postal code and country are required');
+    if (!shipping.country || !shipping.state || !shipping.city) {
+      setError('Country, state, and city are required');
       return false;
     }
     setError(null);
@@ -137,8 +132,8 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
       setError('Valid 16-digit card number required');
       return false;
     }
-    if (!/^\d{2}\/\d{2}$/.test(payment.expiryDate)) {
-      setError('Expiry date must be MM/YY format');
+    if (!payment.expiryMonth || !payment.expiryYear) {
+      setError('Expiry month and year are required');
       return false;
     }
     if (!/^\d{3}$/.test(payment.cvv)) {
@@ -149,9 +144,30 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
     return true;
   };
 
-  const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Location helpers
+  const selectedCountry = LOCATIONS.find(c => c.country === shipping.country);
+  const availableStates = selectedCountry ? selectedCountry.states : [];
+  const selectedState = availableStates.find(s => s.name === shipping.state);
+  const availableCities = selectedState ? selectedState.cities : [];
+
+  const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const shippingCost = 5000; // ₦5,000 flat rate
+  const tax = Math.round(subtotal * 0.075); // 7.5% tax
+  const total = subtotal + shippingCost + tax;
+
+  const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setShipping(prev => ({ ...prev, [name]: value }));
+    setShipping(prev => {
+      const newState = { ...prev, [name]: value };
+      // Clear dependent fields
+      if (name === 'country') {
+        newState.state = '';
+        newState.city = '';
+      } else if (name === 'state') {
+        newState.city = '';
+      }
+      return newState;
+    });
   };
 
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -159,34 +175,40 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
     if (name === 'sameAsShipping') {
       setBilling(prev => ({ ...prev, sameAsShipping: (e.target as HTMLInputElement).checked }));
     } else {
-      setBilling(prev => ({ ...prev, [name]: value }));
+      setBilling(prev => {
+        const newState = { ...prev, [name]: value };
+        if (name === 'country') {
+          newState.state = '';
+          newState.city = '';
+        } else if (name === 'state') {
+          newState.city = '';
+        }
+        return newState;
+      });
     }
   };
 
-  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     let { name, value } = e.target;
 
-    // Auto-format card number (add spaces every 4 digits)
     if (name === 'cardNumber') {
       value = value.replace(/\s/g, '').slice(0, 16);
       value = value.replace(/(\d{4})/g, '$1 ').trim();
     }
 
-    // Auto-format expiry date (MM/YY)
-    if (name === 'expiryDate') {
-      value = value.replace(/\D/g, '').slice(0, 4);
-      if (value.length >= 2) {
-        value = value.slice(0, 2) + '/' + value.slice(2);
-      }
-    }
-
-    // CVV numbers only
     if (name === 'cvv') {
       value = value.replace(/\D/g, '').slice(0, 3);
     }
 
     setPayment(prev => ({ ...prev, [name]: value }));
   };
+
+  // Synchronize expiryDate when month/year changes
+  useEffect(() => {
+    if (payment.expiryMonth && payment.expiryYear) {
+      setPayment(prev => ({ ...prev, expiryDate: `${payment.expiryMonth}/${payment.expiryYear.slice(-2)}` }));
+    }
+  }, [payment.expiryMonth, payment.expiryYear]);
 
   const handleNextStep = async () => {
     if (step === 'shipping') {
@@ -213,7 +235,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
       // In a real app, you would:
       // 1. Send payment token from payment gateway (e.g., Stripe)
       // 2. NOT send raw card data
-      
+
       const orderData = {
         shippingInfo: shipping,
         billingInfo: billing.sameAsShipping ? shipping : billing,
@@ -278,104 +300,127 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
       <div className="max-w-2xl mx-auto px-6 py-12">
         {/* Shipping Step */}
         {step === 'shipping' && (
-          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">Shipping Address</h2>
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mb-10">
+              <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Delivery Details</h2>
+              <p className="text-xs uppercase tracking-widest font-bold text-black/40 dark:text-white/40">Enter your shipping information</p>
+            </div>
+
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="e.g. Ebuka"
+                    value={shipping.firstName}
+                    onChange={handleShippingChange}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="e.g. Okafor"
+                    value={shipping.lastName}
+                    onChange={handleShippingChange}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="okafor@example.com"
+                    value={shipping.email}
+                    onChange={handleShippingChange}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="+234 800 000 0000"
+                    value={shipping.phone}
+                    onChange={handleShippingChange}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Street Address</label>
                 <input
                   type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={shipping.firstName}
+                  name="address"
+                  placeholder="Street, house/apartment number"
+                  value={shipping.address}
                   onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm uppercase tracking-wide"
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={shipping.lastName}
-                  onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm uppercase tracking-wide"
+                  className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
                 />
               </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={shipping.email}
-                onChange={handleShippingChange}
-                className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-              />
-
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Phone Number"
-                value={shipping.phone}
-                onChange={handleShippingChange}
-                className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-              />
-
-              <input
-                type="text"
-                name="address"
-                placeholder="Street Address"
-                value={shipping.address}
-                onChange={handleShippingChange}
-                className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="City"
-                  value={shipping.city}
-                  onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                />
-                <input
-                  type="text"
-                  name="state"
-                  placeholder="State/Province"
-                  value={shipping.state}
-                  onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="postal"
-                  placeholder="Postal Code"
-                  value={shipping.postal}
-                  onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                />
-                <input
-                  type="text"
-                  name="country"
-                  placeholder="Country"
-                  value={shipping.country}
-                  onChange={handleShippingChange}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Country</label>
+                  <select
+                    name="country"
+                    value={shipping.country}
+                    onChange={handleShippingChange}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="">Select Country</option>
+                    {LOCATIONS.map(c => <option key={c.country} value={c.country}>{c.country}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">State / Region</label>
+                  <select
+                    name="state"
+                    value={shipping.state}
+                    onChange={handleShippingChange}
+                    disabled={!shipping.country}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select State</option>
+                    {availableStates.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">City</label>
+                  <select
+                    name="city"
+                    value={shipping.city}
+                    onChange={handleShippingChange}
+                    disabled={!shipping.state}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select City</option>
+                    {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
               </div>
 
               {error && (
-                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm font-bold uppercase tracking-wide">
+                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-widest">
                   {error}
                 </div>
               )}
 
               <button
                 onClick={handleNextStep}
-                className="w-full bg-black dark:bg-white text-white dark:text-black py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-500 transition-colors"
+                className="group w-full bg-blue-500 text-white py-6 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-600 transition-all flex items-center justify-center gap-3 mt-8 shadow-xl hover:shadow-blue-500/20"
               >
-                Continue to Billing
+                Continue to Billing <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -383,22 +428,26 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
 
         {/* Billing Step */}
         {step === 'billing' && (
-          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">Billing Address</h2>
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mb-10">
+              <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Billing Information</h2>
+              <p className="text-xs uppercase tracking-widest font-bold text-black/40 dark:text-white/40">Secure your payment method</p>
+            </div>
+
             <div className="space-y-6">
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-4 cursor-pointer p-6 border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 transition-colors">
                 <input
                   type="checkbox"
                   name="sameAsShipping"
                   checked={billing.sameAsShipping}
                   onChange={handleBillingChange}
-                  className="w-5 h-5 border border-black/20 dark:border-white/20 cursor-pointer"
+                  className="w-5 h-5 border border-blue-500 text-blue-500 focus:ring-0 cursor-pointer"
                 />
-                <span className="text-sm font-bold uppercase tracking-wide">Same as shipping address</span>
+                <span className="text-sm font-black uppercase tracking-widest">Same as shipping address</span>
               </label>
 
               {!billing.sameAsShipping && (
-                <>
+                <div className="space-y-6 pt-4 animate-in fade-in duration-300">
                   <div className="grid grid-cols-2 gap-4">
                     <input
                       type="text"
@@ -406,7 +455,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
                       placeholder="First Name"
                       value={billing.firstName}
                       onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm uppercase tracking-wide"
+                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
                     />
                     <input
                       type="text"
@@ -414,7 +463,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
                       placeholder="Last Name"
                       value={billing.lastName}
                       onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm uppercase tracking-wide"
+                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
                     />
                   </div>
 
@@ -424,65 +473,59 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
                     placeholder="Street Address"
                     value={billing.address}
                     onChange={handleBillingChange}
-                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors"
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                      value={billing.city}
-                      onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                    />
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State/Province"
-                      value={billing.state}
-                      onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="postal"
-                      placeholder="Postal Code"
-                      value={billing.postal}
-                      onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                    />
-                    <input
-                      type="text"
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <select
                       name="country"
-                      placeholder="Country"
                       value={billing.country}
                       onChange={handleBillingChange}
-                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm"
-                    />
+                      className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="">Country</option>
+                      {LOCATIONS.map(c => <option key={c.country} value={c.country}>{c.country}</option>)}
+                    </select>
+                    <select
+                      name="state"
+                      value={billing.state}
+                      onChange={handleBillingChange}
+                      disabled={!billing.country}
+                      className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="">State</option>
+                      {LOCATIONS.find(c => c.country === billing.country)?.states.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                    </select>
+                    <select
+                      name="city"
+                      value={billing.city}
+                      onChange={handleBillingChange}
+                      disabled={!billing.state}
+                      className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm transition-colors appearance-none cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="">City</option>
+                      {LOCATIONS.find(c => c.country === billing.country)?.states.find(s => s.name === billing.state)?.cities.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                   </div>
-                </>
+                </div>
               )}
 
               {error && (
-                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm font-bold uppercase tracking-wide">
+                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-widest">
                   {error}
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-6">
                 <button
                   onClick={() => setStep('shipping')}
-                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10"
+                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-black/10 transition-colors border border-black/10 dark:border-white/10"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleNextStep}
-                  className="flex-1 bg-black dark:bg-white text-white dark:text-black py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-500 transition-colors"
+                  className="flex-1 bg-black dark:bg-white text-white dark:text-black py-5 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white transition-all shadow-xl"
                 >
                   Review Order
                 </button>
@@ -493,78 +536,103 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
 
         {/* Review Step */}
         {step === 'review' && (
-          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">Order Review</h2>
-            <div className="space-y-8">
-              {/* Items */}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mb-10 flex justify-between items-end">
               <div>
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">Order Items</h3>
-                <div className="space-y-4">
+                <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Order Review</h2>
+                <p className="text-xs uppercase tracking-widest font-bold text-black/40 dark:text-white/40">Confirm your selection & details</p>
+              </div>
+              <div className="hidden md:flex items-center gap-2 bg-blue-500/10 px-4 py-2 border border-blue-500/20">
+                <ShieldCheck className="w-4 h-4 text-blue-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Secure Checkout</span>
+              </div>
+            </div>
+
+            <div className="space-y-10">
+              {/* Order Items List */}
+              <div className="bg-black/5 dark:bg-white/5 p-8 rounded-2xl border border-black/5 dark:border-white/5">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-500 mb-6 flex items-center gap-3">
+                  <Grid className="w-4 h-4" /> Your Selection
+                </h3>
+                <div className="divide-y divide-black/5 dark:divide-white/5">
                   {cart.map(item => (
-                    <div key={item.product.id} className="flex justify-between items-start py-4 border-b border-black/5 dark:border-white/5">
-                      <div>
-                        <p className="font-bold text-sm">{item.product.name}</p>
-                        <p className="text-xs text-black/50 dark:text-white/50 mt-1">Qty: {item.quantity}</p>
+                    <div key={item.product.id} className="flex justify-between items-center py-6 first:pt-0 last:pb-0">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-16 bg-black/10 dark:bg-white/10 overflow-hidden">
+                          <img src={item.product.image} className="w-full h-full object-cover" alt="" />
+                        </div>
+                        <div>
+                          <p className="font-black text-sm uppercase tracking-tighter">{item.product.name}</p>
+                          <p className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40 mt-1">QTY: {item.quantity}</p>
+                        </div>
                       </div>
-                      <p className="font-bold text-sm">{CURRENCY}{(item.product.price * item.quantity).toLocaleString()}</p>
+                      <p className="font-black text-sm">{CURRENCY}{(item.product.price * item.quantity).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Addresses */}
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-sm font-black uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">Shipping To</h3>
-                  <div className="text-sm space-y-1">
-                    <p className="font-bold">{shipping.firstName} {shipping.lastName}</p>
-                    <p>{shipping.address}</p>
-                    <p>{shipping.city}, {shipping.state} {shipping.postal}</p>
-                    <p>{shipping.country}</p>
-                    <p className="text-black/50 dark:text-white/50 mt-3">{shipping.email}</p>
-                    <p className="text-black/50 dark:text-white/50">{shipping.phone}</p>
+              {/* Information Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white dark:bg-black/20 p-6 border border-black/10 dark:border-white/10">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4 flex justify-between">
+                    Shipping Details <button onClick={() => setStep('shipping')} className="text-blue-500 hover:underline">Edit</button>
+                  </h3>
+                  <div className="text-sm space-y-1 font-bold uppercase tracking-tight">
+                    <p className="text-blue-500">{shipping.firstName} {shipping.lastName}</p>
+                    <p className="text-[12px]">{shipping.address}</p>
+                    <p className="text-[12px]">{shipping.city}, {shipping.state}</p>
+                    <p className="text-[10px] text-black/40 dark:text-white/40 pt-2">{shipping.email}</p>
+                    <p className="text-[10px] text-black/40 dark:text-white/40">{shipping.phone}</p>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-black uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">Billing Address</h3>
-                  <div className="text-sm space-y-1">
+                <div className="bg-white dark:bg-black/20 p-6 border border-black/10 dark:border-white/10">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4 flex justify-between">
+                    Payment Method <button onClick={() => setStep('billing')} className="text-blue-500 hover:underline">Edit</button>
+                  </h3>
+                  <div className="text-sm space-y-1 font-bold uppercase tracking-tight">
                     {billing.sameAsShipping ? (
-                      <p className="text-black/50 dark:text-white/50 italic">Same as shipping address</p>
+                      <p className="text-[12px] italic opacity-50">Same as shipping details</p>
                     ) : (
                       <>
-                        <p className="font-bold">{billing.firstName} {billing.lastName}</p>
-                        <p>{billing.address}</p>
-                        <p>{billing.city}, {billing.state} {billing.postal}</p>
-                        <p>{billing.country}</p>
+                        <p className="text-blue-500">{billing.firstName} {billing.lastName}</p>
+                        <p className="text-[12px]">{billing.address}</p>
+                        <p className="text-[12px]">{billing.city}, {billing.state}</p>
                       </>
                     )}
+                    <div className="pt-4 flex items-center gap-3">
+                      <CreditCard className="w-5 h-5 text-black/20" />
+                      <span className="text-[10px] uppercase tracking-widest opacity-30 italic">Pay via Card / NFC</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Totals */}
-              <div className="bg-black/5 dark:bg-white/5 px-6 py-6 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-black/60 dark:text-white/60">Subtotal</span>
-                  <span>{CURRENCY}{subtotal.toLocaleString()}</span>
+              {/* Final Totals */}
+              <div className="bg-blue-500 text-white p-8 rounded-3xl shadow-2xl shadow-blue-500/20">
+                <div className="space-y-3 mb-8 opacity-80">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span>Subtotal</span>
+                    <span>{CURRENCY}{subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span>Shipping</span>
+                    <span>{CURRENCY}{shippingCost.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span>Vat Tax (7.5%)</span>
+                    <span>{CURRENCY}{tax.toLocaleString()}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-black/60 dark:text-white/60">Shipping</span>
-                  <span>{CURRENCY}{shippingCost.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-black/60 dark:text-white/60">Tax (7.5%)</span>
-                  <span>{CURRENCY}{tax.toLocaleString()}</span>
-                </div>
-                <div className="border-t border-black/10 dark:border-white/10 pt-3 flex justify-between font-black text-lg">
-                  <span>Total</span>
-                  <span>{CURRENCY}{total.toLocaleString()}</span>
+                <div className="border-t border-white/20 pt-6 flex justify-between items-center">
+                  <span className="text-xs font-black uppercase tracking-[0.3em]">Total Value</span>
+                  <span className="text-5xl font-black tracking-tighter">{CURRENCY}{total.toLocaleString()}</span>
                 </div>
               </div>
 
               {error && (
-                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm font-bold uppercase tracking-wide">
+                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-widest">
                   {error}
                 </div>
               )}
@@ -572,15 +640,15 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setStep('billing')}
-                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10"
+                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-black/10 transition-colors border border-black/10 dark:border-white/10"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleNextStep}
-                  className="flex-1 bg-black dark:bg-white text-white dark:text-black py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-500 transition-colors"
+                  className="flex-1 bg-black dark:bg-white text-white dark:text-black py-5 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-500 hover:text-white transition-all shadow-xl"
                 >
-                  Enter Payment
+                  Pay secure
                 </button>
               </div>
             </div>
@@ -589,93 +657,138 @@ const Checkout: React.FC<CheckoutProps> = ({ cart, onClose }) => {
 
         {/* Payment Step */}
         {step === 'payment' && (
-          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">Payment Details</h2>
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="mb-10">
+              <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Payment</h2>
+              <p className="text-xs uppercase tracking-widest font-bold text-black/40 dark:text-white/40">Secure & encrypted transaction</p>
+            </div>
+
             <div className="space-y-6">
-              <div className="bg-blue-500/10 border border-blue-500 px-4 py-3 rounded text-xs text-blue-600 dark:text-blue-400">
-                <p className="font-bold">⚠️ Demo Mode</p>
-                <p className="mt-1">Use test card: 4111 1111 1111 1111 | Any future date | Any CVC</p>
-              </div>
-
-              <input
-                type="text"
-                name="cardName"
-                placeholder="Cardholder Name"
-                value={payment.cardName}
-                onChange={handlePaymentChange}
-                className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm uppercase tracking-wide"
-              />
-
-              <input
-                type="text"
-                name="cardNumber"
-                placeholder="Card Number"
-                value={payment.cardNumber}
-                onChange={handlePaymentChange}
-                maxLength={19}
-                className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm tracking-wider"
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="expiryDate"
-                  placeholder="MM/YY"
-                  value={payment.expiryDate}
-                  onChange={handlePaymentChange}
-                  maxLength={5}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm tracking-wider"
-                />
-                <input
-                  type="text"
-                  name="cvv"
-                  placeholder="CVV"
-                  value={payment.cvv}
-                  onChange={handlePaymentChange}
-                  maxLength={3}
-                  className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/50 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm tracking-wider"
-                />
-              </div>
-
-              <div className="bg-black/5 dark:bg-white/5 px-6 py-6">
-                <div className="flex justify-between font-black text-lg mb-2">
-                  <span>Total Amount</span>
-                  <span>{CURRENCY}{total.toLocaleString()}</span>
+              <div className="p-6 bg-blue-500/5 border border-blue-500/10 flex items-start gap-4">
+                <ShieldCheck className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Demo Environment</p>
+                  <p className="text-sm font-bold mt-1">Use test card: <span className="bg-blue-500/10 px-2 py-0.5 rounded">4111 1111 1111 1111</span></p>
                 </div>
-                <p className="text-xs text-black/50 dark:text-white/50 mt-4">
-                  By clicking "Complete Purchase", you authorize this charge to your card. Your payment is secure and encrypted.
-                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Cardholder Name</label>
+                <input
+                  type="text"
+                  name="cardName"
+                  placeholder="NAME AS ON CARD"
+                  value={payment.cardName}
+                  onChange={handlePaymentChange}
+                  className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm font-bold uppercase tracking-widest"
+                />
+              </div>
+
+              <div className="space-y-1.5 relative">
+                <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Card Number</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    placeholder="0000 0000 0000 0000"
+                    value={payment.cardNumber}
+                    onChange={handlePaymentChange}
+                    maxLength={19}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm tracking-[0.2em] font-black"
+                  />
+                  <CreditCard className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black/20" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">Expiration Date</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select
+                      name="expiryMonth"
+                      value={payment.expiryMonth}
+                      onChange={handlePaymentChange}
+                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm font-bold appearance-none cursor-pointer"
+                    >
+                      <option value="">MM</option>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const m = (i + 1).toString().padStart(2, '0');
+                        return <option key={m} value={m}>{m}</option>;
+                      })}
+                    </select>
+                    <select
+                      name="expiryYear"
+                      value={payment.expiryYear}
+                      onChange={handlePaymentChange}
+                      className="px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm font-bold appearance-none cursor-pointer"
+                    >
+                      <option value="">YYYY</option>
+                      {Array.from({ length: 11 }, (_, i) => {
+                        const y = (new Date().getFullYear() + i).toString();
+                        return <option key={y} value={y}>{y}</option>;
+                      })}
+                    </select>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-black tracking-widest text-black/40 dark:text-white/40">CVV / CVC</label>
+                  <input
+                    type="text"
+                    name="cvv"
+                    placeholder="000"
+                    value={payment.cvv}
+                    onChange={handlePaymentChange}
+                    maxLength={3}
+                    className="w-full px-4 py-3 border border-black/10 dark:border-white/10 bg-white dark:bg-black/20 text-black dark:text-white focus:outline-none focus:border-blue-500 text-sm tracking-widest font-black"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-black/5 dark:bg-white/5 p-8 border border-black/5 dark:border-white/5 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-black uppercase tracking-widest text-black/40 dark:text-white/40">Arrival Estim.</span>
+                  <span className="text-xs font-black uppercase text-blue-500">3 - 5 BUSINESS DAYS</span>
+                </div>
+                <div className="flex justify-between items-center border-t border-black/5 dark:border-white/5 pt-4">
+                  <span className="text-xs font-black uppercase tracking-widest text-black/40 dark:text-white/40">Total to Pay</span>
+                  <span className="text-2xl font-black">{CURRENCY}{total.toLocaleString()}</span>
+                </div>
               </div>
 
               {error && (
-                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-sm font-bold uppercase tracking-wide">
+                <div className="px-4 py-3 bg-red-500/10 border border-red-500 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-widest">
                   {error}
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-6">
                 <button
                   onClick={() => setStep('review')}
                   disabled={isLoading}
-                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/10 dark:border-white/10 disabled:opacity-50"
+                  className="flex-1 bg-black/5 dark:bg-white/5 text-black dark:text-white py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-black/10 transition-colors border border-black/10 dark:border-white/10 disabled:opacity-50"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSubmitOrder}
                   disabled={isLoading}
-                  className="flex-1 bg-green-500 text-white py-5 font-black uppercase tracking-[0.2em] text-xs hover:bg-green-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 bg-green-500 text-white py-5 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-green-600 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl hover:shadow-green-500/20"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Processing...
+                      SECURELY PROCESSING...
                     </>
                   ) : (
-                    'Complete Purchase'
+                    <>
+                      COMPLETE PURCHASE <Check className="w-4 h-4" />
+                    </>
                   )}
                 </button>
               </div>
+              <p className="text-center text-[9px] uppercase font-black tracking-widest text-black/20 dark:text-white/20 mt-4">
+                Payments are processed via encrypted SSL gateway. CC data is never stored on our servers.
+              </p>
             </div>
           </div>
         )}

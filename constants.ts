@@ -88,3 +88,31 @@ export const SOCIAL_POSTS: SocialPost[] = [
   { id: 's5', username: '@calabar_fan', image: '/assets/images/social/calabar-fan.avif' },
   { id: 's6', username: '@vibe_check', image: '/assets/images/social/vibe-check.avif' }
 ];
+
+export const LOCATIONS = [
+  {
+    country: 'Nigeria',
+    states: [
+      { name: 'Lagos', cities: ['Ikeja', 'Lekki', 'Victoria Island', 'Surulere'] },
+      { name: 'Abuja', cities: ['Garki', 'Wuse', 'Maitama', 'Asokoro'] },
+      { name: 'Rivers', cities: ['Port Harcourt', 'Obio-Akpor', 'Eleme'] },
+      { name: 'Oyo', cities: ['Ibadan', 'Ogbomosho', 'Oyo'] },
+      { name: 'Kano', cities: ['Kano City', 'Fagge', 'Gwale'] }
+    ]
+  },
+  {
+    country: 'United States',
+    states: [
+      { name: 'California', cities: ['Los Angeles', 'San Francisco', 'San Diego'] },
+      { name: 'New York', cities: ['New York City', 'Buffalo', 'Rochester'] },
+      { name: 'Texas', cities: ['Houston', 'Austin', 'Dallas'] }
+    ]
+  },
+  {
+    country: 'United Kingdom',
+    states: [
+      { name: 'England', cities: ['London', 'Manchester', 'Birmingham', 'Liverpool'] },
+      { name: 'Scotland', cities: ['Glasgow', 'Edinburgh', 'Aberdeen'] }
+    ]
+  }
+];
